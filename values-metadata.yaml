@@ -1,0 +1,244 @@
+imageVersion:
+  __metadata:
+    name: "imageVersion"
+    label: "Image Version"
+    description: "Version of the Portworx Image. e.g 2.0.3"
+    type: "string"
+    immutable: false
+    required: false
+
+changePortRange:
+  __metadata:
+    name: "changePortRange"
+    label: "Change Port Range"
+    description: "Changes the start port range for Portworx to 17001"
+    type: "boolean"
+    immutable: false
+    required: false
+
+kvdb:
+  __metadata:
+    name: "kvdb"
+    label: "kvdb endpoint"
+    description: "The kvdb endpoint. Should be in the format etcd:http://<your-kvdb-endpoint>:2379. Multiple endpoints need to be seperated by ';'."
+    type: "string"
+    immutable: false
+    required: false
+
+clusterName:
+  __metadata:
+    name: "clusterName"
+    label: "Cluster name"
+    description: "Name of the Portworx cluster."
+    type: "string"
+    immutable: false
+    required: false
+
+storage:
+  __metadata:
+    name: "storage"
+    label: "Storage options"
+    description:  "These options specify which drives Portworx should use. By default, Portworx will automatically try to use all available raw drives."
+    immutable: false
+    required: false
+  drives:
+    __metadata:
+      name: "drives"
+      label: "Drives"
+      description: "This is a ';' seperated list of drives. For eg: '/dev/sda;/dev/sdb;/dev/sdc'. If left empty, Portworx will try to use available drives."
+      type: "string"
+      immutable: false
+      required: false
+
+  usefileSystemDrive:
+    __metadata:
+      name: "usefileSystemDrive"
+      label: "Use filesystem drives"
+      description: "Instructs Portworx to use unmounted drives even if they have a filesystem."
+      type: "boolean"
+      immutable: false
+      required: false
+
+  usedrivesAndPartitions:
+    __metadata:
+      name: "usedrivesAndPartitions"
+      label: "Use unmounted drives and partitions"
+      description: "Instructs Portworx to use unmounted drives and partitions."
+      type: "boolean"
+      immutable: false
+      required: false
+
+  journalDevice:
+    __metadata:
+      name: "journalDevice"
+      label: "Journal Device"
+      description: "Specify a separate block device to be used as a journaling device for Portworx metadata. Use 'auto' to automatically create a journal partition."
+      type: "string"
+      immutable: false
+      required: false
+
+  metadataSize:
+    __metadata:
+      name: "metadataSize"
+      label: "metadata Disk Size"
+      description: "Specify the size (in GB) of a separate block device to be used as a metadata device. Adding a metadata disk will enable better performance."
+      type: "number"
+      immutable: false
+      required: false
+
+network:
+  __metadata:
+    name: "network"
+    label: "Network options"
+    description:  "These options tell Portworx which network interfaces should be used. By default, Portworx will automatically pick the first usable interface."
+    immutable: false
+    required: false
+  dataInterface:
+    __metadata:
+      name: "dataInterface"
+      label: "Data Network Interface"
+      description: "Specify network interface Portworx should use for it's data traffic. By default, Portworx will select the first routable interface."
+      type: "string"
+      immutable: false
+      required: false
+
+  managementInterface:
+    __metadata:
+      name: "managementInterface"
+      label: "Management Network Interface"
+      description: "Specify network interface Portworx should use for it's management traffic. By default, Portworx will select the first routable interface."
+      type: "string"
+      immutable: false
+      required: false
+
+secretType:
+  __metadata:
+    name: "secretType"
+    label: "Secrets Store Type"
+    description: "Select the secrets store type for use for Portworx features like Encryption and CloudSnaps."
+    type: "string"
+    immutable: false
+    required: false
+    options:
+      - label: "Kubernetes"
+        value: "k8s"
+      - label: "Vault"
+        value: "vault"
+      - label: "Key value store (etcd or consul)"
+        value: "kvdb"
+      - label: "AWS KMS"
+        value: "aws-kms"
+      - label: "none"
+        value: "none"
+
+envVars:
+  __metadata:
+    name: "envVars"
+    label: "Environment variables"
+    description: "This is a ';' seperated list of environment variables. For eg: MYENV1=myvalue1;MYENV2=myvalue2"
+    type: "string"
+    immutable: false
+    required: false
+
+envVars:
+  __metadata:
+    name: "advOpts"
+    label: "Advance Options"
+    description: "This is a ';' seperated list of advance options. For eg: -f;-A;-b"
+    type: "string"
+    immutable: false
+    required: false
+
+storkVersion:
+  __metadata:
+    name: "storkVersion"
+    label: "Stork version"
+    description: "Stork version to use."
+    type: "string"
+    immutable: false
+    required: false
+
+customRegistryURL:
+  __metadata:
+    name: "customRegistryURL"
+    label: "Custom Registry URL"
+    description: "Specify a custom registry & repository that will be used to download container images (eg: dockerhub.acme.net:5443 or myregistry.com/myrepo/)."
+    type: "string"
+    immutable: false
+    required: false
+
+registrySecret:
+  __metadata:
+    name: "registrySecret"
+    label: "Registry Secret"
+    description: "Specify a custom Kubernetes secret that will be used to authenticate with a container registry."
+    type: "string"
+    immutable: false
+    required: false
+
+imagePullSecrets:
+  __metadata:
+    label: "Image Pull Secrets"
+    description: "Add 'imagePullSecrets' if images are pulled from a private docker registry."
+    type: "string"
+    immutable: false
+    required: false
+
+csi:
+  __metadata:
+    name: "csi"
+    label: "Install CSI (Container Storage Interface)"
+    description: "Select if you want to enable CSI (Container Storage Interface). CSI is still in ALPHA."
+    type: "boolean"
+    immutable: false
+    required: false
+
+internalKVDB:
+  __metadata:
+    name: "internalKVDB"
+    label: "Use internal KVDB"
+    description: "Set this to true if you want to use internal KVDB. With this option, Portworx will internally create and manage an etcd cluster."
+    type: "boolean"
+    immutable: false
+    required: false
+
+etcd:
+  __metadata:
+    name: "etcd"
+    label: "Etcd security options"
+    description:  "Security options for Etcd. Not required if you are using insecure etcd (http)."
+    immutable: false
+    required: false
+  secret:
+      __metadata:
+        name: "secret"
+        label: "ETCD secret"
+        description: "Kubernetes secret where the username,password and CA cert are stored. Should be created in kube-system namespace and the keys should be called username, password and ca.pem."
+        type: "string"
+        immutable: false
+        required: false
+
+serviceAccount:
+  __metadata:
+    name: "serviceAccount"
+    label: "Service Account"
+    description:  "Service Account to use for Portworx"
+    immutable: false
+    required: false
+  hook:
+    create:
+      __metadata:
+        name: "create"
+        label: "Create service account for hooks"
+        description: "Select if you want Portworx to create a new service account for running chart hooks."
+        type: "boolean"
+        immutable: false
+        required: false
+    name:
+      __metadata:
+        name: "name"
+        label: "Hook service account name"
+        description: "Name of the existing service account to use for chart hooks."
+        type: "string"
+        immutable: false
+        required: false
