@@ -7,6 +7,9 @@ Metadata:
         default: Basic Settings
       Parameters:
         - KubeClusterName
+        - KubeGetLambdaArn
+				- KubeConfigKmsContext
+				- PortworxClusterName
         - SecretType
       - Label:
         default: Storage Settings
@@ -15,15 +18,33 @@ Metadata:
         - MaxStorageNodes
     ParameterLabels:
       KubeClusterName:
-        default: "Clustername"
+        default: "EKS Cluster Name"
+			KubeGetLambdaArn:
+				default: "Lambda Arn"
+			KubeConfigKmsContext:
+				default: "KMS Context"
+      PortworxClusterName:
+        default: "Portworx Cluster Name"
       DiskSpec:
         default: "Disk Spec"
       MaxStorageNodes:
         default: "Max. storage nodes"
 Parameters:
   KubeClusterName:
-    Description: "Portworx Cluster name"
+    Description: 'Use the "EKSClusterName" from the EKSStack outputs section in CloudFormation.'
     Type: String
+  PortworxClusterName:
+    Description: "Desired Portworx Cluster Name"
+    Type: String
+    Default: "my-cluster"
+  KubeGetLambdaArn:
+     Description: 'Get this from the EKSStack outputs section in CloudFormation.'
+     Type: String
+  KubeConfigKmsContext:
+    Description: 'This is using the default from the AWS EKS Quick Start, if you modified
+    this context when deploying. You need to use the modified KMS context here.'
+    Type: String
+    Default: "EKSQuickStart"
   SecretType:
     Description: "Secret store (defaults to none)"
     Type: String
@@ -45,6 +66,8 @@ Resources:
     Type: "AWSQS::Kubernetes::Helm"
     Properties:
       ClusterID: !Ref KubeClusterName
+      KubeConfigKmsContext: !Ref KubeConfigKmsContext
+      Namespace: kube-system
       # If the chart is not in the stable repo then supply a repo url
       # RepoUrl: https://svc-catalog-charts.storage.googleapis.com
       # namespace is optional, in most cases it's best to leave this out so that a namespace is dynamically generated.

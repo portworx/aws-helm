@@ -9,13 +9,44 @@ This helm chart deploys [Portworx](https://portworx.com/) and [Stork](https://do
 - Tiller v2.9.0 and above is running on the Kubernetes cluster where you wish to deploy Portworx.
 - All [Pre-requisites](https://docs.portworx.com/#minimum-requirements). for Portworx fulfilled.
 
-### PodSecurityPolicy Requirements
-
-This chart requires a `PodSecurityPolicy` role to be bound to the target namespace prior to installation.
-
 ## Limitations
 * The portworx helm chart can only be deployed in the kube-system namespace. Hence use "kube-system" in the "Target namespace" during configuration.
 * You can only deploy one portworx helm chart per Kubernetes cluster.
+
+
+## Installing the Chart
+To install the chart with the release name `my-release` run the following commands substituting relevant values for your setup:
+
+##### NOTE:
+`clusterName` should be a unique name identifying your Portworx cluster. The default value is `mycluster`, but it is suggested to update it with your naming scheme.
+
+Example of using the helm CLI to install the chart:
+```
+helm install --debug --name my-release --set clusterName=$(uuidgen) ./helm/charts/portworx/
+```
+
+## Configuration
+The following tables lists the configurable parameters of the Portworx chart and their default values.
+
+| Parameter | Description |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `deploymentType` | The deployment type. Can be either docker/oci |
+| `imageVersion` | The image tag to pull |
+| `clusterName` | Portworx Cluster Name |
+| `usefileSystemDrive` | Should Portworx use an unmounted drive even with a filesystem ? |
+| `usedrivesAndPartitions` | Should Portworx use the drives as well as partitions on the disk ? |
+| `secretType` | Secrets store to be used can be AWS KMS/K8s default(none) |
+| `drives` | Semi-colon seperated list of drives to be used for storage (example: "/dev/sda;/dev/sdb") |
+| `dataInterface` | Name of the interface <ethX> |
+| `managementInterface` | Name of the interface <ethX> |
+| `envVars` | semi-colon-separated list of environment variables that will be exported to portworx. (example: MYENV1=val1;MYENV2=val2) |
+| `stork` | [Storage Orchestration for Hyperconvergence](https://github.com/libopenstorage/stork). |
+| `storkVersion` | The version of stork |
+| `journalDevice` | Journal device for Portworx metadata |
+| `csi` | Enable CSI (Tech Preview only) |
+| `internalKVDB` | Internal KVDB store |
+
+Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
 ## Uninstalling the Chart
 
@@ -28,24 +59,9 @@ helm delete my-release
 ```
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
-
 ## Documentation
 * [Portworx docs site](https://docs.portworx.com/scheduler/kubernetes/)
 * [Portworx interactive tutorials](https://docs.portworx.com/scheduler/kubernetes/px-k8s-interactive.html)
-
-## Installing the Chart using the CLI
-To install the chart with the release name `my-release` run the following commands substituting relevant values for your setup:
-
-##### NOTE:
-`kvdb` is a required field. The chart installation would not proceed unless this option is provided.
-If the etcdcluster being used is a secured ETCD (SSL/TLS) then please follow instructions to create a kubernetes secret with the certs. https://docs.portworx.com/scheduler/kubernetes/etcd-certs-using-secrets.html#create-kubernetes-secret
-
-`clusterName` should be a unique name identifying your Portworx cluster. The default value is `mycluster`, but it is suggested to update it with your naming scheme.
-
-Example of using the helm CLI to install the chart:
-```
-helm install --debug --name my-release --set kvdb=etcd:http://192.168.70.90:2379,clusterName=$(uuidgen) ./helm/charts/portworx/
-```
 
 ## Basic troubleshooting
 
@@ -130,9 +146,8 @@ Incorrect ETCD URL provided. It is either not reachable or is incorrect...
 ```
 Ensure the correct etcd URL is set as a parameter to the `helm install` command.
 
-
 ## Support
 
-If you have an enterprise license, please contact us at support@portworx.com with your license key and logs.
+Please contact us at support@portworx.com with the generated log files.
 
 We are always available on Slack. Join us on [Slack](http://slack.portworx.com)
