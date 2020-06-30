@@ -30,21 +30,22 @@ The following tables lists the configurable parameters of the Portworx chart and
 
 | Parameter | Description |
 |--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `deploymentType` | The deployment type. Can be either docker/oci |
-| `imageVersion` | The image tag to pull |
 | `clusterName` | Portworx Cluster Name |
+| `imageVersion` | The image tag to pull |
 | `usefileSystemDrive` | Should Portworx use an unmounted drive even with a filesystem ? |
 | `usedrivesAndPartitions` | Should Portworx use the drives as well as partitions on the disk ? |
-| `secretType` | Secrets store to be used can be AWS KMS/K8s default(none) |
-| `drives` | Semi-colon seperated list of drives to be used for storage (example: "/dev/sda;/dev/sdb") |
+| `drives` | Semi-colon seperated list of drives to be used for storage (example: "/dev/sda;/dev/sdb"), to auto generate amazon disks use a list of drive specs (example: "type=gp2,size=150";type=io1,size=100,iops=2000") |
+| `journalDevice` | Journal device for Portworx metadata |
+| `metadataSize` | 0 |
 | `dataInterface` | Name of the interface <ethX> |
 | `managementInterface` | Name of the interface <ethX> |
+| `secretType` | Secrets store to be used can be aws-kms/k8s/none defaults to: none |
 | `envVars` | semi-colon-separated list of environment variables that will be exported to portworx. (example: MYENV1=val1;MYENV2=val2) |
-| `stork` | [Storage Orchestration for Hyperconvergence](https://github.com/libopenstorage/stork). |
-| `storkVersion` | The version of stork |
-| `journalDevice` | Journal device for Portworx metadata |
-| `csi` | Enable CSI (Tech Preview only) |
-| `internalKVDB` | Internal KVDB store |
+| `advOpts` | advanced options, do not use unless instructed by portworx-support |
+| `storkVersion` | The version of stork [Storage Orchestration for Hyperconvergence](https://github.com/libopenstorage/stork).  |
+| `csi` | Enable CSI (Tech Preview only) defaults to: false |
+| `internalKVDB` | Internal KVDB store defaults to: true (only option currently) |
+| `changePortRange` | When set to true the new range starts at 17000 |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 

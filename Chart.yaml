@@ -2,7 +2,7 @@ name: portworx
 version: 1.0.18
 description: A Helm chart for installing PX-Enterprise on Kubernetes.
 tillerVersion: ">=2.7.2"
-kubeVersion: ">=1.10.0"
+kubeVersion: ">=1.14.0-r0"
 appVersion: "2.6.0"
 keywords:
   - Storage
