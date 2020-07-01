@@ -6,7 +6,7 @@ metadata:
   annotations:
     portworx.io/is-openshift: "true"
 spec:
-  image: "portworx/oci-monitor:2.1.5"
+  image: "portworx/oci-monitor:{{.Values.imageVersion}}"
   imagePullPolicy: "Always"
   kvdb:
     internal: true

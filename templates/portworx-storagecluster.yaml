@@ -1,59 +1,46 @@
-{{/* Setting defaults if they are omitted. */}}
-{{- $clusterName := .Values.clusterName | default "mycluster" }}
-{{- $drives := .Values.drives | default "none" }}
-{{- $usefileSystemDrive := .Values.usefileSystemDrive | default false }}
-{{- $usedrivesAndPartitions := .Values.usedrivesAndPartitions | default false }}
-{{- $maxStorageNodesPerZone := .Values.maxStorageNodesPerZone | default "none" }}
-
-{{- $dataInterface := .Values.dataInterface | default "none" }}
-{{- $managementInterface := .Values.managementInterface | default "none" }}
-
-{{- $envVars := .Values.envVars | default "none" }}
-{{- $csi := .Values.csi | default false }}
-
 apiVersion: core.libopenstorage.org/v1alpha1
 kind: StorageCluster
 metadata:
-  name: {{ $clusterName }}
+  name: {{ .Values.clusterName }}
   namespace: kube-system
   annotations:
     portworx.com/install-source: helm/{{.Release.Service}}-r{{.Release.Revision}}
-    portworx.com/helm-vars: chart="{{.Chart.Name}}-{{.Chart.Version}}"{{range $k, $v := .Values }}{{if $v}},{{ $k }}="{{ $v }}"{{end}}{{end}}
+    portworx.com/helm-vars: chart="{{.Chart.Name}}-{{.Chart.Version}}"{{range $k, $v := .Values }}{{if $v}},{{ $k }}="{{ $v }}" {{end}}{{end}}
 spec:
   image: portworx/oci-monitor:{{.Values.imageVersion}}
   imagePullPolicy: Always
   kvdb:
     internal: true
-  {{- if eq $drives "none" }}
+  {{- if eq .Values.drives "none" }}
   storage:
-    useAllWithPartitions: {{ $usedrivesAndPartitions }}
-    forceUseDisks: {{ $usefileSystemDrive }}
+    useAllWithPartitions: {{ .Values.usedrivesAndPartitions }}
+    forceUseDisks: {{ .Values.usefileSystemDrive }}
     journalDevice: auto
     kvdbDevice: type=gp2,size=150
-    {{- if ne $maxStorageNodesPerZone  "none" }}
-    maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
-    {{- end -}}
-  {{- else -}}
+    {{- if ne .Values.maxStorageNodesPerZone  "none" }}
+    maxStorageNodesPerZone: {{ .Values.maxStorageNodesPerZone }}
+    {{- end }}
+  {{- else }}
   cloudStorage:
     deviceSpecs:
-		{{- $driveNames := $drives | split ";" }}
+    {{- $driveNames := .Values.drives | split ";" }}
     {{- range $index, $name := $driveNames }}
-		- {{ $name }
-		{{- end -}}
+    - {{ $name }}
+    {{- end }}
     journalDevice: auto
     kvdbDeviceSpec: type=gp2,size=150
-    {{- if ne $maxStorageNodesPerZone  "none" }}
-    maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
-    {{- end -}}
-  {{- end -}}
-  {{- if (ne $dataInterface "none") or (ne $mgmtInterface "none") }}
+    {{- if ne .Values.maxStorageNodesPerZone  "none" }}
+    maxStorageNodesPerZone: {{ .Values.maxStorageNodesPerZone }}
+    {{- end }}
+  {{- end }}
+  {{- if (ne .Values.dataInterface "none") or (ne .Values.managementInterface "none") }}
   network:
-    {{- if ne $dataInterface "none" }}
-    dataInterface: "{{ $dataInterface }}"
-    {{- end -}}
-    {{- if ne $managementInterface "none" }}
-    mgmtInterface: "{{ $managementInterface }}"
-  {{- end -}}
+    {{- if ne .Values.dataInterface "none" }}
+    dataInterface: {{ .Values.dataInterface }}
+    {{- end }}
+    {{- if ne .Values.managementInterface "none" }}
+    mgmtInterface: {{ .Values.managementInterface }}
+  {{- end }}
   secretsProvider: k8s
   stork:
     enabled: true
@@ -66,7 +53,7 @@ spec:
       type: prometheus
       params:
         url: http://prometheus:9090
-  {{- if $csi -}}
+  {{- if .Values.csi }}
   featureGates:
     CSI: "true"
-  {{- end -}}
+  {{- end }}
