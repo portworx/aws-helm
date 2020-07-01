@@ -1,3 +1,10 @@
+{{- $usefileSystemDrive := .Values.storage.usefileSystemDrive | default false }}
+{{- $drives := .Values.storage.drives | default "none" }}
+{{- $usedrivesAndPartitions := .Values.storage.usedrivesAndPartitions | default false }}
+{{- $maxStorageNodesPerZone := .Values.storage.maxStorageNodesPerZone | default "none" }}
+{{- $dataInterface := .Values.dataInterface | default "none" }}
+{{- $managementInterface := .Values.managementInterface | default "none" }}
+
 apiVersion: core.libopenstorage.org/v1alpha1
 kind: StorageCluster
 metadata:
@@ -11,35 +18,36 @@ spec:
   imagePullPolicy: Always
   kvdb:
     internal: true
-  {{- if eq .Values.drives "none" }}
+  {{- if eq $drives "none" }}
   storage:
-    useAllWithPartitions: {{ .Values.usedrivesAndPartitions }}
-    forceUseDisks: {{ .Values.usefileSystemDrive }}
+    useAllWithPartitions: {{ $usedrivesAndPartitions }}
+    forceUseDisks: {{ $usefileSystemDrive }}
     journalDevice: auto
     kvdbDevice: type=gp2,size=150
-    {{- if ne .Values.maxStorageNodesPerZone  "none" }}
+    {{- if ne $maxStorageNodesPerZone  "none" }}
     maxStorageNodesPerZone: {{ .Values.maxStorageNodesPerZone }}
     {{- end }}
   {{- else }}
   cloudStorage:
     deviceSpecs:
-    {{- $driveNames := .Values.drives | split ";" }}
+    {{- $driveNames := $drives | split ";" }}
     {{- range $index, $name := $driveNames }}
     - {{ $name }}
     {{- end }}
     journalDevice: auto
     kvdbDeviceSpec: type=gp2,size=150
-    {{- if ne .Values.maxStorageNodesPerZone  "none" }}
+    {{- if ne $maxStorageNodesPerZone  "none" }}
     maxStorageNodesPerZone: {{ .Values.maxStorageNodesPerZone }}
     {{- end }}
   {{- end }}
-  {{- if (ne .Values.dataInterface "none") or (ne .Values.managementInterface "none") }}
+  {{- if (ne $dataInterface "none") or (ne $managementInterface "none") }}
   network:
-    {{- if ne .Values.dataInterface "none" }}
+    {{- if ne $dataInterface "none" }}
     dataInterface: {{ .Values.dataInterface }}
     {{- end }}
-    {{- if ne .Values.managementInterface "none" }}
+    {{- if ne $managementInterface "none" }}
     mgmtInterface: {{ .Values.managementInterface }}
+    {{- end }}
   {{- end }}
   secretsProvider: k8s
   stork:
