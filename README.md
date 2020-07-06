@@ -64,11 +64,29 @@ The following tables lists the configurable parameters of the Portworx chart and
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
-## Uninstalling the Chart
+## Un-installing Portworx
 
-To uninstall/delete the `my-release` deployment:
+Edit the storage cluster.
+```bash
+kubectl -n <namespace> edit storagecluster <yourclustername>
+```
 
-> **Tip** > The Portworx configuration files under `/etc/pwx/` directory are preserved, and will not be deleted.
+Add the following yaml under `spec:`
+
+```bash
+  deleteStrategy:
+      type: UninstallAndWipe
+```
+
+Save the spec and exit out.
+Then delete the storagecluster
+
+```bash
+kubectl -n <namespace> delete storagecluster <yourclustername>
+```
+
+Once all the portworx related pods are gone
+un-install/delete the `my-release` deployment:
 
 ```
 helm delete my-release
