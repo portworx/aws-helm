@@ -14,7 +14,7 @@ metadata:
     portworx.com/install-source: helm/{{.Release.Service}}-r{{.Release.Revision}}
     portworx.com/helm-vars: chart="{{.Chart.Name}}-{{.Chart.Version}}"{{range $k, $v := .Values }}{{if $v}},{{ $k }}="{{ $v }}" {{end}}{{end}}
 spec:
-  image: portworx/oci-monitor:{{.Values.imageVersion}}
+  image: portworx/oci-monitor:{{ required "A valid Image tag is required in the SemVer format" .Values.imageVersion }}
   imagePullPolicy: Always
   kvdb:
     internal: true
@@ -52,10 +52,10 @@ spec:
   secretsProvider: k8s
   stork:
     enabled: true
-    image: openstorage/stork:{{.Values.storkVersion}}
+    image: libopenstorage/stork:{{ required "A valid Image tag is required in the SemVer format" .Values.storkVersion }}
   autopilot:
     enabled: true
-    image: portworx/autopilot:{{.Values.autopilotVersion}}
+    image: portworx/autopilot:{{ required "A valid Image tag is required in the SemVer format" .Values.autopilotVersion }}
     providers:
     - name: default
       type: prometheus
