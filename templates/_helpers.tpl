@@ -1,3 +1,4 @@
+{{- $awsRepo := "217273820646.dkr.ecr.us-east-1.amazonaws.com/3a3fcb1c-7ee5-4f3b-afe3-d293c3f9beb4/cg-3746887092/portworx/oci-monitor" }}
 
 {{- define "px.getImage" -}}
 {{- if (.Values.customRegistryURL) -}}
@@ -7,7 +8,7 @@
     	{{cat (trim .Values.customRegistryURL) "/portworx/oci-monitor" | replace " " ""}}
     {{- end -}}
 {{- else -}}
-	{{ "portworx/oci-monitor" }}
+	{{cat (trim $awsRepo) "/portworx/oci-monitor" | replace " " ""}}
 {{- end -}}
 {{- end -}}
 
@@ -19,7 +20,7 @@
         {{cat (trim .Values.customRegistryURL) "/openstorage/stork" | replace " " ""}}
     {{- end -}}
 {{- else -}}
-    {{ "openstorage/stork" }}
+	{{cat (trim $awsRepo) "/portworx/stork" | replace " " ""}}
 {{- end -}}
 {{- end -}}
 
@@ -32,7 +33,7 @@
         {{cat (trim .Values.customRegistryURL) "/portworx/autopilot" | replace " " ""}}
     {{- end -}}
 {{- else -}}
-    {{ "portworx/autopilot" }}
+	{{cat (trim $awsRepo) "/portworx/autopilot" | replace " " ""}}
 {{- end -}}
 {{- end -}}
 
@@ -44,6 +45,6 @@
         {{cat (trim .Values.customRegistryURL) "/portworx/px-operator" | replace " " ""}}
     {{- end -}}
 {{- else -}}
-    {{ "portworx/px-operator" }}
+	{{cat (trim $awsRepo) "/portworx/px-operator" | replace " " ""}}
 {{- end -}}
 {{- end -}}

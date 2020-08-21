@@ -9,7 +9,7 @@
 ## Deploying the AWS Marketplace Portworx Enterprise image
 
 Since we will be using the AWS Marketplace ECS Image Registry
-We will ahve to first get the authorization token:
+We will have to first get the authorization token:
 
 ```bash
 aws ecr --region=us-east-1 get-authorization-token --output text --query authorizationData[].authorizationToken | base64 -d | cut -d: -f2
@@ -27,22 +27,31 @@ kubectl create secret docker-registry aws-marketplace-credentials \
 ```
 
 To install the chart with the release name `my-release` run the following commands substituting relevant values for your setup:
-Make sure tos et the customRegistry value and the registrySecret.
+Make sure to set the registrySecret.
 
 ```bash
-helm install my-release https://github.com/portworx/aws-helm/raw/master/portworx-2.5.3.tgz \
---set storage.drives="type=gp2\,size=100" --set customRegistryURL=217273820646.dkr.ecr.us-east-1.amazonaws.com/3a3fcb1c-7ee5-4f3b-afe3-d293c3f9beb4/cg-3746887092 --set registrySecret=aws-marketplace-credentials
+helm install my-release https://github.com/portworx/aws-helm/raw/master/portworx-2.5.6.tgz \
+--set storage.drives="type=gp2\,size=100" --set registrySecret=aws-marketplace-credentials
 ```
 
 ##### NOTE:
 `clusterName` should be a unique name identifying your Portworx cluster. The default value is `mycluster`, but it is suggested to update it with your naming scheme.
+
+Once that command is running you have to create the iamservice account so that portworx can meter your usage.
+
+```
+eksctl create iamserviceaccount --name portworx --namespace kube-system --cluster paul-eks --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess \
+--attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringRegisterUsage --approve --override-existing-serviceaccounts
+```
+
+This will also update the portworx ServiceAccount with the created iamservice annotations.
 
 ## Configuration
 The following tables lists the configurable parameters of the Portworx chart and their default values.
 
 | Parameter | Description |
 |--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `awsProductID` | Portworx Product Id, PX-Enterprise: 3a3fcb1c-7ee5-4f3b-afe3-d293c3f9beb4 , PX-Enterprise + DR: d9792c12-2f12-4baf-8b18-baee3245ccd9 |
+| `awsProduct` | Portworx Product Name, PX-ENTERPRISE or PX-ENTERPRISE+DR (Defaults to PX-ENTERPRISE) |
 | `clusterName` | Portworx Cluster Name |
 | `imageVersion` | The image tag to pull |
 | `usefileSystemDrive` | Should Portworx use an unmounted drive even with a filesystem ? |
@@ -55,9 +64,10 @@ The following tables lists the configurable parameters of the Portworx chart and
 | `secretType` | Secrets store to be used can be aws-kms/k8s/none defaults to: none |
 | `envVars` | semi-colon-separated list of environment variables that will be exported to portworx. (example: MYENV1=val1;MYENV2=val2) |
 | `advOpts` | advanced options, do not use unless instructed by portworx-support |
+| `imageVersion` | The version of the OCI monitor, this determines which Portworx version we're installing |
 | `storkVersion` | The version of stork [Storage Orchestration for Hyperconvergence](https://github.com/libopenstorage/stork).  |
-| `csi` | Enable CSI (Tech Preview only) defaults to: false |
-| `internalKVDB` | Internal KVDB store defaults to: true (only option currently) |
+| `autopilotVersion` | the version of AutoPilot. |
+| `operatorVersion` | The version of the PX Operator |
 | `changePortRange` | When set to true the new range starts at 17000 |
 | `customRegistryURL` | Replace this with the custom registry from AWS |
 | `registrySecret` | Name of the custom registry secret |
@@ -74,8 +84,8 @@ kubectl -n <namespace> edit storagecluster <yourclustername>
 Add the following yaml under `spec:`
 
 ```bash
-  deleteStrategy:
-      type: UninstallAndWipe
+deleteStrategy:
+    type: UninstallAndWipe
 ```
 
 Save the spec and exit out.
@@ -91,7 +101,7 @@ un-install/delete the `my-release` deployment:
 ```
 helm delete my-release
 ```
-The command removes all the Kubernetes components associated with the chart and deletes the release.
+This command removes all the Kubernetes components associated with the chart and deletes the release.
 
 ## Documentation
 * [Portworx docs site](https://docs.portworx.com/scheduler/kubernetes/)

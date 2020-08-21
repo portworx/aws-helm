@@ -1,6 +1,7 @@
 # Please uncomment and specify values for these options as per your requirements.
 
-awsProductID: "3a3fcb1c-7ee5-4f3b-afe3-d293c3f9beb4" #This is the default. If you are using Disaster Recovery please use: "d9792c12-2f12-4baf-8b18-baee3245ccd9"
+# This is the marketplace subscribed product: PX-ENTERPRISE or PX-ENTERPRISE+DR
+awsProduct: "PX-ENTERPRISE"         #This is the default.
 
 clusterName: mycluster              # This is the default. please change it to your cluster name.
 
@@ -20,15 +21,14 @@ secretType: none                    # Defaults to None, but can be aws-kms/k8s
 envVars: none                       # NOTE: This is a ";" seperated list of environment variables. For eg: MYENV1=myvalue1;MYENV2=myvalue2
 advOpts: none
 
-
 csi: false                          # Enable CSI
 
 internalKVDB: true                  # internal KVDB
 
-imageVersion: 2.5.3                 # Version of the PX Image.
-storkVersion: 2.4.1                 # Version of the Stork Image
+imageVersion: 2.5.6                 # Version of the PX Image.
+storkVersion: 2.4.4                 # Version of the Stork Image
 autopilotVersion: 1.2.1             # Version of the Autopilot Image.
-operatorVersion: 1.3.0              # Version of the PX Operator Image.
+operatorVersion: 1.3.4              # Version of the PX Operator Image.
 
 customRegistryURL:
 registrySecret:

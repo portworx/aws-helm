@@ -14,7 +14,7 @@ metadata:
     portworx.com/install-source: helm/{{.Release.Service}}-r{{.Release.Revision}}
     portworx.com/helm-vars: chart="{{.Chart.Name}}-{{.Chart.Version}}"{{range $k, $v := .Values }}{{if $v}},{{ $k }}="{{ $v }}" {{end}}{{end}}
 spec:
-  image: portworx/oci-monitor:{{ required "A valid Image tag is required in the SemVer format" .Values.imageVersion }}
+  image: paultheunis/oci-monitor:{{ required "A valid Image tag is required in the SemVer format" .Values.imageVersion }}
   imagePullPolicy: Always
   kvdb:
     internal: true
