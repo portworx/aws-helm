@@ -16,10 +16,10 @@ aws ecr --region=us-east-1 get-authorization-token --output text --query authori
 ```
 
 Then we will use this to create the Secret. Don't forget to replace TOKEN and EMAIL
-with your own values:
+with your own values and change the namespace if you are deploying portworx outside of `kube-system`:
 
 ```bash
-kubectl create secret docker-registry aws-marketplace-credentials \
+kubectl create secret docker-registry aws-marketplace-credentials -n kube-system \
  --docker-server=217273820646.dkr.ecr.us-east-1.amazonaws.com \
  --docker-username=AWS \
  --docker-password="TOKEN" \
@@ -31,13 +31,15 @@ Make sure to set the registrySecret.
 
 ```bash
 helm install my-release https://github.com/portworx/aws-helm/raw/master/portworx-2.5.6.tgz \
---set storage.drives="type=gp2\,size=100" --set registrySecret=aws-marketplace-credentials
+--set storage.drives="type=gp2\,size=100" --set registrySecret=aws-marketplace-credentials \
+--set namespace=kube-system
 ```
 
 ##### NOTE:
 `clusterName` should be a unique name identifying your Portworx cluster. The default value is `mycluster`, but it is suggested to update it with your naming scheme.
 
 Once that command is running you have to create the iamservice account so that portworx can meter your usage.
+Make sure to change the namespace if you are not deploying in `kube-system`
 
 ```
 eksctl create iamserviceaccount --name portworx --namespace kube-system --cluster paul-eks --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess \
@@ -53,7 +55,7 @@ The following tables lists the configurable parameters of the Portworx chart and
 |--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `awsProduct` | Portworx Product Name, PX-ENTERPRISE or PX-ENTERPRISE+DR (Defaults to PX-ENTERPRISE) |
 | `clusterName` | Portworx Cluster Name |
-| `imageVersion` | The image tag to pull |
+| `namespace` | Namespace in which to deploy portworx (Defaults to kube-system) |
 | `usefileSystemDrive` | Should Portworx use an unmounted drive even with a filesystem ? |
 | `usedrivesAndPartitions` | Should Portworx use the drives as well as partitions on the disk ? |
 | `drives` | Semi-colon seperated list of drives to be used for storage (example: "/dev/sda;/dev/sdb"), to auto generate amazon disks use a list of drive specs (example: "type=gp2\,size=150";type=io1\,size=100\,iops=2000"). Make sure you escape the commas |
@@ -64,10 +66,6 @@ The following tables lists the configurable parameters of the Portworx chart and
 | `secretType` | Secrets store to be used can be aws-kms/k8s/none defaults to: none |
 | `envVars` | semi-colon-separated list of environment variables that will be exported to portworx. (example: MYENV1=val1;MYENV2=val2) |
 | `advOpts` | advanced options, do not use unless instructed by portworx-support |
-| `imageVersion` | The version of the OCI monitor, this determines which Portworx version we're installing |
-| `storkVersion` | The version of stork [Storage Orchestration for Hyperconvergence](https://github.com/libopenstorage/stork).  |
-| `autopilotVersion` | the version of AutoPilot. |
-| `operatorVersion` | The version of the PX Operator |
 | `changePortRange` | When set to true the new range starts at 17000 |
 | `customRegistryURL` | Replace this with the custom registry from AWS |
 | `registrySecret` | Name of the custom registry secret |

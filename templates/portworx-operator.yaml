@@ -1,9 +1,11 @@
+{{- $registrySecret := .Values.registrySecret | default "none" }}
+{{- $namespace := .Values.namespace | default "kube-system" }}
 # SOURCE: https://install.portworx.com/?comp=pxoperator
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: portworx-operator
-  namespace: kube-system
+  namespace: {{ $namespace }}
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -21,7 +23,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: portworx-operator
-  namespace: kube-system
+  namespace: {{ $namespace }}
 roleRef:
   kind: ClusterRole
   name: portworx-operator
@@ -31,7 +33,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: portworx-operator
-  namespace: kube-system
+  namespace: {{ $namespace }}
 spec:
   strategy:
     rollingUpdate:
@@ -47,10 +49,14 @@ spec:
       labels:
         name: portworx-operator
     spec:
+      {{- if not (eq $registrySecret "none") }}
+      imagePullSecrets:
+      - name: "{{ $registrySecret }}"
+      {{- end }}
       containers:
       - name: portworx-operator
         imagePullPolicy: Always
-        image: {{ template "px.getOperatorImage" . }}:{{ required "A valid Image tag is required in the SemVer format" .Values.operatorVersion }}
+        image: "{{- template "px.getOperatorImage" . }}"
         command:
         - /operator
         - --verbose

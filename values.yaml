@@ -4,6 +4,7 @@
 awsProduct: "PX-ENTERPRISE"         #This is the default.
 
 clusterName: mycluster              # This is the default. please change it to your cluster name.
+namespace: kube-system              # This is the default. Change this if you don't plan to install in kube-system
 
 storage:
   usefileSystemDrive: false         # true/false Instructs PX to use an unmounted Drive even if it has a filesystem.
@@ -25,11 +26,6 @@ csi: false                          # Enable CSI
 
 internalKVDB: true                  # internal KVDB
 
-imageVersion: 2.5.6                 # Version of the PX Image.
-storkVersion: 2.4.4                 # Version of the Stork Image
-autopilotVersion: 1.2.1             # Version of the Autopilot Image.
-operatorVersion: 1.3.4              # Version of the PX Operator Image.
-
 customRegistryURL:
 registrySecret:
 
@@ -37,3 +33,17 @@ serviceAccount:
   hook:
     create: true
     name:
+
+awsRepos:
+  enterprise: "117940112483.dkr.ecr.us-east-1.amazonaws.com/3a3fcb1c-7ee5-4f3b-afe3-d293c3f9beb4/cg-3948028933"
+  dr: "117940112483.dkr.ecr.us-east-1.amazonaws.com/6a97e814-fbe5-4ae3-a3e2-14ca735b5e6b/cg-2648516897"
+
+awsVersions:
+  enterprise: "PortworxEnterprise2.6-latest"
+  dr: "PortworxEnterprise2.6-latest"
+
+versions:
+  operator: 1.4.0
+  ociMon: 2.6.1
+  autoPilot: 1.2.1
+  stork: 2.4.4

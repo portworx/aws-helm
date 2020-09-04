@@ -4,18 +4,26 @@
 {{- $maxStorageNodesPerZone := .Values.storage.maxStorageNodesPerZone | default "none" }}
 {{- $dataInterface := .Values.dataInterface | default "none" }}
 {{- $managementInterface := .Values.managementInterface | default "none" }}
+{{- $registrySecret := .Values.registrySecret | default "none" }}
+{{- $namespace := .Values.namespace | default "kube-system" }}
 
 apiVersion: core.libopenstorage.org/v1alpha1
 kind: StorageCluster
 metadata:
   name: {{ .Values.clusterName }}
-  namespace: kube-system
+  namespace: {{ $namespace }}
   annotations:
     portworx.com/install-source: helm/{{.Release.Service}}-r{{.Release.Revision}}
     portworx.com/helm-vars: chart="{{.Chart.Name}}-{{.Chart.Version}}"{{range $k, $v := .Values }}{{if $v}},{{ $k }}="{{ $v }}" {{end}}{{end}}
 spec:
-  image: paultheunis/oci-monitor:{{ required "A valid Image tag is required in the SemVer format" .Values.imageVersion }}
+  env:
+    - name: PX_IMAGE
+      value: "{{template "px.getImage" . }}"
+  image: "{{template "px.getOCIImage" . }}"
   imagePullPolicy: Always
+  {{- if not (eq $registrySecret "none") }}
+  imagePullSecret: {{ $registrySecret }}
+  {{- end }}
   kvdb:
     internal: true
   {{- if eq $drives "none" }}
@@ -52,10 +60,10 @@ spec:
   secretsProvider: k8s
   stork:
     enabled: true
-    image: libopenstorage/stork:{{ required "A valid Image tag is required in the SemVer format" .Values.storkVersion }}
+    image: "{{template "px.getStorkImage" . }}"
   autopilot:
     enabled: true
-    image: portworx/autopilot:{{ required "A valid Image tag is required in the SemVer format" .Values.autopilotVersion }}
+    image: "{{template "px.getAutopilotImage" . }}"
     providers:
     - name: default
       type: prometheus
