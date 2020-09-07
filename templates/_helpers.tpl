@@ -16,14 +16,11 @@
     {{- cat (trim .Values.customRegistryURL) "/portworx/px-enterprise:" (trim .Values.versions.ociMon)| replace " " ""}}
   {{- end -}}
 {{- else -}}
-{{- /*
   {{- if eq $product "PX-ENTERPRISE+DR" }}
     {{- cat (trim .Values.awsRepos.dr) "/portworx/px-enterprise:" (trim .Values.awsVersions.dr) | replace " " ""}}
   {{- else }}
     {{- cat (trim .Values.awsRepos.enterprise) "/paultheunis/px-enterprise:" (trim .Values.awsVersions.enterprise) | replace " " ""}}
   {{- end -}}
-{{ */ -}}
-  {{ "paultheunis/px-enterprise:latest" }}
 {{- end -}}
 {{- end -}}
 
@@ -36,14 +33,11 @@
     {{- cat (trim .Values.customRegistryURL) "/portworx/oci-monitor:" (trim .Values.versions.ociMon)| replace " " ""}}
   {{- end -}}
 {{- else -}}
-{{- /*
   {{- if eq $product "PX-ENTERPRISE+DR" }}
     {{- cat (trim .Values.awsRepos.dr) "/portworx/oci-monitor:" (trim .Values.awsVersions.dr) | replace " " ""}}
   {{- else }}
     {{- cat (trim .Values.awsRepos.enterprise) "/paultheunis/oci-monitor:" (trim .Values.awsVersions.enterprise) | replace " " ""}}
   {{- end -}}
-*/ -}}
-  {{ "paultheunis/oci-monitor:latest" }}
 {{- end -}}
 {{- end -}}
 
