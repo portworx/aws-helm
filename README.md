@@ -42,6 +42,8 @@ Once that command is running you have to create the iamservice account so that p
 Make sure to change the namespace if you are not deploying in `kube-system`
 
 ```
+eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=paul-eks --approve // The IAM OIDC Provider is not enabled by default on EKS cluster, you can use this command to enable it.
+
 eksctl create iamserviceaccount --name portworx --namespace kube-system --cluster paul-eks --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess \
 --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringRegisterUsage --approve --override-existing-serviceaccounts
 ```
