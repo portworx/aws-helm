@@ -43,7 +43,8 @@ awsVersions:
   dr: "PortworxEnterprise2.6-latest"
 
 versions:
-  operator: 1.4.0
-  ociMon: 2.6.1
-  autoPilot: 1.3.0
-  stork: 2.4.4
+  operator: "1.4.0"
+  enterprise: "2.6.1"
+  ociMon: "2.6.1"
+  autoPilot: "1.3.0"
+  stork: "2.4.4"

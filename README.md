@@ -38,11 +38,17 @@ helm install my-release https://github.com/portworx/aws-helm/raw/master/portworx
 ##### NOTE:
 `clusterName` should be a unique name identifying your Portworx cluster. The default value is `mycluster`, but it is suggested to update it with your naming scheme.
 
+Next we need to make sure we enable the IAM OIDC Provider for your EKS cluster.
+Make sure to replace `<clustername>` with your EKS cluster and change the `region` if you are not running in us-east-1
+```
+eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=<clustername> --approve
+```
+
 Once that command is running you have to create the iamservice account so that portworx can meter your usage.
-Make sure to change the namespace if you are not deploying in `kube-system`
+Make sure to change the namespace if you are not deploying in `kube-system` and make sure to replace `<clustername>` with your EKS cluster
 
 ```
-eksctl create iamserviceaccount --name portworx --namespace kube-system --cluster paul-eks --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess \
+eksctl create iamserviceaccount --name portworx --namespace kube-system --cluster <clustername> --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess \
 --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringRegisterUsage --approve --override-existing-serviceaccounts
 ```
 
