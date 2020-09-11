@@ -3,7 +3,6 @@
 [Portworx](https://portworx.com/) is a software defined persistent storage solution designed and purpose built for applications deployed as containers, via container orchestrators such as Kubernetes, Marathon and Swarm. It is a clustered block storage solution and provides a Cloud-Native layer from which containerized stateful applications programmatically consume block, file and object storage services directly through the scheduler.
 
 ## Limitations
-* The portworx helm chart can only be deployed in the kube-system namespace. Hence use "kube-system" in the "Target namespace" during configuration.
 * You can only deploy one portworx helm chart per Kubernetes cluster.
 
 ## Deploying the AWS Marketplace Portworx Enterprise image
@@ -26,33 +25,35 @@ kubectl create secret docker-registry aws-marketplace-credentials -n kube-system
  --docker-email="EMAIL"
 ```
 
-To install the chart with the release name `my-release` run the following commands substituting relevant values for your setup:
-Make sure to set the registrySecret.
-
-```bash
-helm install my-release https://github.com/portworx/aws-helm/raw/master/portworx-2.5.6.tgz \
---set storage.drives="type=gp2\,size=100" --set registrySecret=aws-marketplace-credentials \
---set namespace=kube-system
-```
-
-##### NOTE:
-`clusterName` should be a unique name identifying your Portworx cluster. The default value is `mycluster`, but it is suggested to update it with your naming scheme.
-
-Next we need to make sure we enable the IAM OIDC Provider for your EKS cluster.
+Next we have to make sure we create an IAMServiceAccount for Portworx so we can send metering data to AWS.
+First we enable the IAM OIDC Provider for your EKS cluster.
 Make sure to replace `<clustername>` with your EKS cluster and change the `region` if you are not running in us-east-1
 ```
 eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=<clustername> --approve
 ```
 
-Once that command is running you have to create the iamservice account so that portworx can meter your usage.
+Second we have to create the IAMServiceAccount with the appropriate permissions.
 Make sure to change the namespace if you are not deploying in `kube-system` and make sure to replace `<clustername>` with your EKS cluster
-
 ```
-eksctl create iamserviceaccount --name portworx --namespace kube-system --cluster <clustername> --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess \
+eksctl create iamserviceaccount --name portworx-aws --namespace kube-system --cluster <clustername> --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess \
 --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringRegisterUsage --approve --override-existing-serviceaccounts
 ```
 
-This will also update the portworx ServiceAccount with the created iamservice annotations.
+This will create an `IAMServiceAccount` on amazon `https://console.aws.amazon.com/iam/home?#/roles` and
+will create a `ServiceAcccount` in the requested namespace, which we will pass to our helmchart.
+
+Finally,
+To install the chart with the release name `my-release` run the following commands substituting relevant values for your setup:
+Make sure to set the registrySecret.
+
+```bash
+helm install my-release https://github.com/portworx/aws-helm/raw/master/portworx-2.6.1.tgz \
+--set storage.drives="type=gp2\,size=100" --set registrySecret=aws-marketplace-credentials \
+--set namespace=kube-system --set aws.serviceAccount.name="portworx-aws"
+```
+
+##### NOTE:
+`clusterName` should be a unique name identifying your Portworx cluster. The default value is `mycluster`, but it is suggested to update it with your naming scheme.
 
 ## Configuration
 The following tables lists the configurable parameters of the Portworx chart and their default values.
@@ -75,6 +76,7 @@ The following tables lists the configurable parameters of the Portworx chart and
 | `changePortRange` | When set to true the new range starts at 17000 |
 | `customRegistryURL` | Replace this with the custom registry from AWS |
 | `registrySecret` | Name of the custom registry secret |
+| `aws.serviceAcccount` | Name of the created service account with required IAM permissions |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 

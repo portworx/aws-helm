@@ -6,6 +6,7 @@
 {{- $managementInterface := .Values.managementInterface | default "none" }}
 {{- $registrySecret := .Values.registrySecret | default "none" }}
 {{- $namespace := .Values.namespace | default "kube-system" }}
+{{- $serviceAccount := .Values.aws.serviceAccount.name | default "none" }}
 
 apiVersion: core.libopenstorage.org/v1alpha1
 kind: StorageCluster
@@ -17,6 +18,10 @@ metadata:
     portworx.com/helm-vars: chart="{{.Chart.Name}}-{{.Chart.Version}}"{{range $k, $v := .Values }}{{if $v}},{{ $k }}="{{ $v }}" {{end}}{{end}}
 spec:
   env:
+    {{- if not (eq $serviceAccount "none") }}
+    - name: PX_SERVICE_ACCOUNT
+      value: {{ $serviceAccount }}
+    {{- end }}
     - name: PX_IMAGE
       value: "{{template "px.getImage" . }}"
   image: "{{template "px.getOCIImage" . }}"

@@ -17,9 +17,9 @@
   {{- end -}}
 {{- else -}}
   {{- if eq $product "PX-ENTERPRISE+DR" }}
-    {{- cat (trim .Values.awsRepos.dr) "/portworx/px-enterprise:" (trim .Values.awsVersions.dr) | replace " " ""}}
+    {{- cat (trim .Values.aws.repos.dr) "/portworx/px-enterprise:" (trim .Values.aws.versions.dr) | replace " " ""}}
   {{- else }}
-    {{- cat (trim .Values.awsRepos.enterprise) "/portworx/px-enterprise:" (trim .Values.awsVersions.enterprise) | replace " " ""}}
+    {{- cat (trim .Values.aws.repos.enterprise) "/paultheunis/px-enterprise:" (trim .Values.aws.versions.enterprise) | replace " " ""}}
   {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -34,9 +34,9 @@
   {{- end -}}
 {{- else -}}
   {{- if eq $product "PX-ENTERPRISE+DR" }}
-    {{- cat (trim .Values.awsRepos.dr) "/portworx/oci-monitor:" (trim .Values.awsVersions.dr) | replace " " ""}}
+    {{- cat (trim .Values.aws.repos.dr) "/portworx/oci-monitor:" (trim .Values.aws.versions.dr) | replace " " ""}}
   {{- else }}
-    {{- cat (trim .Values.awsRepos.enterprise) "/portworx/oci-monitor:" (trim .Values.awsVersions.enterprise) | replace " " ""}}
+    {{- cat (trim .Values.aws.repos.enterprise) "/paultheunis/oci-monitor:" (trim .Values.aws.versions.enterprise) | replace " " ""}}
   {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -51,9 +51,9 @@
   {{- end -}}
 {{- else -}}
   {{- if eq $product "PX-ENTERPRISE+DR" }}
-    {{- cat (trim .Values.awsRepos.dr) "/openstorage/stork:" (trim .Values.awsVersions.dr) | replace " " ""}}
+    {{- cat (trim .Values.aws.repos.dr) "/openstorage/stork:" (trim .Values.aws.versions.dr) | replace " " ""}}
   {{- else }}
-    {{- cat (trim .Values.awsRepos.enterprise) "/openstorage/stork:" (trim .Values.awsVersions.enterprise) | replace " " ""}}
+    {{- cat (trim .Values.aws.repos.enterprise) "/paultheunis/stork:" (trim .Values.aws.versions.enterprise) | replace " " ""}}
   {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -68,9 +68,9 @@
   {{- end -}}
 {{- else -}}
   {{- if eq $product "PX-ENTERPRISE+DR" }}
-    {{- cat (trim .Values.awsRepos.dr) "/portworx/autopilot:" (trim .Values.awsVersions.dr) | replace " " ""}}
+    {{- cat (trim .Values.aws.repos.dr) "/portworx/autopilot:" (trim .Values.aws.versions.dr) | replace " " ""}}
   {{- else }}
-    {{- cat (trim .Values.awsRepos.enterprise) "/portworx/autopilot:" (trim .Values.awsVersions.enterprise) | replace " " ""}}
+    {{- cat (trim .Values.aws.repos.enterprise) "/paultheunis/autopilot:" (trim .Values.aws.versions.enterprise) | replace " " ""}}
   {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -85,9 +85,9 @@
   {{- end -}}
 {{- else -}}
   {{- if eq $product "PX-ENTERPRISE+DR" }}
-    {{- cat (trim .Values.awsRepos.dr) "/portworx/px-operator:" (trim .Values.awsVersions.dr) | replace " " ""}}
+    {{- cat (trim .Values.aws.repos.dr) "/portworx/px-operator:" (trim .Values.aws.versions.dr) | replace " " ""}}
   {{- else }}
-    {{- cat (trim .Values.awsRepos.enterprise) "/portworx/px-operator:" (trim .Values.awsVersions.enterprise) | replace " " ""}}
+    {{- cat (trim .Values.aws.repos.enterprise) "/paultheunis/px-operator:" (trim .Values.aws.versions.enterprise) | replace " " ""}}
   {{- end -}}
 {{- end -}}
 {{- end -}}
