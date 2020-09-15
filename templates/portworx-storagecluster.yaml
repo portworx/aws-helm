@@ -6,7 +6,7 @@
 {{- $managementInterface := .Values.managementInterface | default "none" }}
 {{- $registrySecret := .Values.registrySecret | default "none" }}
 {{- $namespace := .Values.namespace | default "kube-system" }}
-{{- $serviceAccount := .Values.aws.serviceAccount.name | default "none" }}
+{{- $serviceAccount := .Values.serviceAccount | default "none" }}
 
 apiVersion: core.libopenstorage.org/v1alpha1
 kind: StorageCluster
@@ -53,7 +53,7 @@ spec:
     maxStorageNodesPerZone: {{ .Values.maxStorageNodesPerZone }}
     {{- end }}
   {{- end }}
-  {{- if (ne $dataInterface "none") or (ne $managementInterface "none") }}
+  {{- if or (ne $dataInterface "none") (ne $managementInterface "none") }}
   network:
     {{- if ne $dataInterface "none" }}
     dataInterface: {{ .Values.dataInterface }}

@@ -49,7 +49,7 @@ Make sure to set the registrySecret.
 ```bash
 helm install my-release https://github.com/portworx/aws-helm/raw/master/portworx-2.6.1.tgz \
 --set storage.drives="type=gp2\,size=100" --set registrySecret=aws-marketplace-credentials \
---set namespace=kube-system --set aws.serviceAccount.name="portworx-aws"
+--set namespace=kube-system --set serviceAccount="portworx-aws"
 ```
 
 ##### NOTE:

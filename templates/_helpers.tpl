@@ -16,11 +16,14 @@
     {{- cat (trim .Values.customRegistryURL) "/portworx/px-enterprise:" (trim .Values.versions.enterprise)| replace " " ""}}
   {{- end -}}
 {{- else -}}
+  {{- /*
   {{- if eq $product "PX-ENTERPRISE+DR" }}
     {{- cat (trim .Values.aws.repos.dr) "/portworx/px-enterprise:" (trim .Values.aws.versions.dr) | replace " " ""}}
   {{- else }}
     {{- cat (trim .Values.aws.repos.enterprise) "/paultheunis/px-enterprise:" (trim .Values.aws.versions.enterprise) | replace " " ""}}
   {{- end -}}
+  */ -}}
+  {{- cat "portworx/px-enterprise:" (trim .Values.versions.enterprise)| replace "" "" }}
 {{- end -}}
 {{- end -}}
 
