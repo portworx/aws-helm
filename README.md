@@ -2,31 +2,10 @@
 
 [Portworx](https://portworx.com/) is a software defined persistent storage solution designed and purpose built for applications deployed as containers, via container orchestrators such as Kubernetes, Marathon and Swarm. It is a clustered block storage solution and provides a Cloud-Native layer from which containerized stateful applications programmatically consume block, file and object storage services directly through the scheduler.
 
-## Limitations
-* You can only deploy one portworx helm chart per Kubernetes cluster.
+#### Preparing your EKS Cluster
 
-## Deploying the AWS Marketplace Portworx Enterprise image
-
-Since we will be using the AWS Marketplace ECS Image Registry
-We will have to first get the authorization token:
-
-```bash
-aws ecr --region=us-east-1 get-authorization-token --output text --query authorizationData[].authorizationToken | base64 -d | cut -d: -f2
-```
-
-Then we will use this to create the Secret. Don't forget to replace TOKEN and EMAIL
-with your own values and change the namespace if you are deploying portworx outside of `kube-system`:
-
-```bash
-kubectl create secret docker-registry aws-marketplace-credentials -n kube-system \
- --docker-server=217273820646.dkr.ecr.us-east-1.amazonaws.com \
- --docker-username=AWS \
- --docker-password="TOKEN" \
- --docker-email="EMAIL"
-```
-
-Next we have to make sure we create an IAMServiceAccount for Portworx so we can send metering data to AWS.
-First we enable the IAM OIDC Provider for your EKS cluster.
+Before we can create an IAMServiceAccount for Portworx so we can send metering data to AWS.
+we need to enable the IAM OIDC Provider for your EKS cluster.
 Make sure to replace `<clustername>` with your EKS cluster and change the `region` if you are not running in us-east-1
 ```
 eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=<clustername> --approve
@@ -43,13 +22,11 @@ This will create an `IAMServiceAccount` on amazon `https://console.aws.amazon.co
 will create a `ServiceAcccount` in the requested namespace, which we will pass to our helmchart.
 
 Finally,
-To install the chart with the release name `my-release` run the following commands substituting relevant values for your setup:
-Make sure to set the registrySecret.
+To install the chart with the release name `my-release` run the following commands substituting relevant values for your setup
 
 ```bash
 helm install my-release https://github.com/portworx/aws-helm/raw/master/portworx-2.6.1.tgz \
---set storage.drives="type=gp2\,size=100" --set registrySecret=aws-marketplace-credentials \
---set namespace=kube-system --set serviceAccount="portworx-aws"
+--set storage.drives="type=gp2\,size=1000" --set namespace=kube-system --set serviceAccount="portworx-aws"
 ```
 
 ##### NOTE:
@@ -63,20 +40,16 @@ The following tables lists the configurable parameters of the Portworx chart and
 | `awsProduct` | Portworx Product Name, PX-ENTERPRISE or PX-ENTERPRISE+DR (Defaults to PX-ENTERPRISE) |
 | `clusterName` | Portworx Cluster Name |
 | `namespace` | Namespace in which to deploy portworx (Defaults to kube-system) |
-| `usefileSystemDrive` | Should Portworx use an unmounted drive even with a filesystem ? |
-| `usedrivesAndPartitions` | Should Portworx use the drives as well as partitions on the disk ? |
-| `drives` | Semi-colon seperated list of drives to be used for storage (example: "/dev/sda;/dev/sdb"), to auto generate amazon disks use a list of drive specs (example: "type=gp2\,size=150";type=io1\,size=100\,iops=2000"). Make sure you escape the commas |
-| `journalDevice` | Journal device for Portworx metadata |
-| `metadataSize` | 0 |
-| `dataInterface` | Name of the interface <ethX> |
-| `managementInterface` | Name of the interface <ethX> |
+| `storage.usefileSystemDrive` | Should Portworx use an unmounted drive even with a filesystem ? |
+| `storage.usedrivesAndPartitions` | Should Portworx use the drives as well as partitions on the disk ? |
+| `storage.drives` | Semi-colon seperated list of drives to be used for storage (example: "/dev/sda;/dev/sdb"), to auto generate amazon disks use a list of drive specs (example: "type=gp2\,size=150";type=io1\,size=100\,iops=2000"). Make sure you escape the commas |
+| `storage.journalDevice` | Journal device for Portworx metadata |
+| `storage.metadataSize` | 0 |
+| `network.dataInterface` | Name of the interface <ethX> |
+| `network.managementInterface` | Name of the interface <ethX> |
 | `secretType` | Secrets store to be used can be aws-kms/k8s/none defaults to: none |
 | `envVars` | semi-colon-separated list of environment variables that will be exported to portworx. (example: MYENV1=val1;MYENV2=val2) |
-| `advOpts` | advanced options, do not use unless instructed by portworx-support |
-| `changePortRange` | When set to true the new range starts at 17000 |
-| `customRegistryURL` | Replace this with the custom registry from AWS |
-| `registrySecret` | Name of the custom registry secret |
-| `aws.serviceAcccount` | Name of the created service account with required IAM permissions |
+| `serviceAcccount` | Name of the created service account with required IAM permissions |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
