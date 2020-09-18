@@ -12,6 +12,6 @@ entries:
     sources:
     - https://github.com/portworx/aws-helm
     urls:
-    - portworx-2.6.1.tgz
+      - https://raw.githubusercontent.com/portworx/aws-helm/master/stable/portworx-2.6.1.tgz
     version: 2.6.1
 generated: "2020-09-17T23:05:15.709293044-07:00"
