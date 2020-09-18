@@ -1,2 +1,4 @@
 *.tgz
 .git
+stable
+.index.yaml
