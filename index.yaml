@@ -1,0 +1,41 @@
+apiVersion: v1
+entries:
+  portworx:
+  - apiVersion: v1
+    appVersion: 2.6.1
+    created: "2020-09-17T22:22:53.373408199-07:00"
+    description: A Helm chart for installing PX-Enterprise on Kubernetes.
+    digest: ec6c1614dbb5261cb8a8816bddffa5633ae170776063c44af416cf22345b829e
+    home: https://portworx.com/
+    icon: https://raw.githubusercontent.com/portworx/helm/master/doc/media/k8s-porx.png
+    keywords:
+    - Storage
+    - EKS
+    - persistent disk
+    - pvc
+    - cloud native storage
+    - persistent storage
+    - portworx
+    - amd64
+    - Commercial
+    kubeVersion: '>=1.14.0-r0'
+    maintainers:
+    - email: harsh@portworx.com
+      name: Harsh Desai
+    - email: sathya@portworx.com
+      name: Sathya Balakrishnan
+    - email: aditya@portworx.com
+      name: Aditya Dani
+    - email: paul@portworx.com
+      name: Paul Theunis
+    - email: disrani@portworx.com
+      name: Dinesh Israni
+    - email: tapas@portworx.com
+      name: Tapas Sharma
+    name: portworx
+    sources:
+    - https://github.com/portworx/helm
+    urls:
+    - portworx-2.6.1.tgz
+    version: 2.6.1
+generated: "2020-09-17T22:22:53.371234571-07:00"
