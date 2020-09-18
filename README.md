@@ -21,12 +21,16 @@ eksctl create iamserviceaccount --name portworx-aws --namespace kube-system --cl
 This will create an `IAMServiceAccount` on amazon `https://console.aws.amazon.com/iam/home?#/roles` and
 will create a `ServiceAcccount` in the requested namespace, which we will pass to our helmchart.
 
-Finally,
-To install the chart with the release name `my-release` run the following commands substituting relevant values for your setup
 
-```bash
-helm install my-release https://github.com/portworx/aws-helm/raw/master/portworx-2.6.1.tgz \
---set storage.drives="type=gp2\,size=1000" --set namespace=kube-system --set serviceAccount="portworx-aws"
+#### Installation
+To add the Portworx AWS Helm repository run the following command:
+```
+helm repo add portworx https://raw.githubusercontent.com/portworx/aws-helm/master/stable
+```
+
+To install the chart with the release name `my-release` run the following commands substituting relevant values for your setup
+```
+helm install my-release portworx/portworx --set storage.drives="type=gp2\,size=1000" --set namespace=kube-system --set serviceAccount="portworx-aws"
 ```
 
 ##### NOTE:
