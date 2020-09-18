@@ -37,7 +37,7 @@ The following tables lists the configurable parameters of the Portworx chart and
 
 | Parameter | Description |
 |--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `awsProduct` | Portworx Product Name, PX-ENTERPRISE or PX-ENTERPRISE+DR (Defaults to PX-ENTERPRISE) |
+| `awsProduct` | Portworx Product Name, PX-ENTERPRISE or PX-ENTERPRISE-DR (Defaults to PX-ENTERPRISE) |
 | `clusterName` | Portworx Cluster Name |
 | `namespace` | Namespace in which to deploy portworx (Defaults to kube-system) |
 | `storage.usefileSystemDrive` | Should Portworx use an unmounted drive even with a filesystem ? |
