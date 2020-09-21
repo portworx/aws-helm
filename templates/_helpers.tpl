@@ -16,7 +16,7 @@
     {{- cat (trim .Values.customRegistryURL) "/portworx/px-enterprise:" (trim .Values.versions.enterprise)| replace " " ""}}
   {{- end -}}
 {{- else -}}
-  {{- cat "portworx/px-enterprise:" (trim .Values.versions.enterprise)| replace "" "" }}
+  {{- cat "portworx/px-enterprise:" (trim .Values.versions.enterprise) | replace " " "" }}
 {{- end -}}
 {{- end -}}
 
