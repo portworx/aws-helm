@@ -32,7 +32,7 @@ serviceAccount:
 
 aws:
   repos:
-    enterprise: "117940112483.dkr.ecr.us-east-1.amazonaws.com/3a3fcb1c-7ee5-4f3b-afe3-d293c3f9beb4/cg-225286984"
+    enterprise: "117940112483.dkr.ecr.us-east-1.amazonaws.com/3a3fcb1c-7ee5-4f3b-afe3-d293c3f9beb4/cg-2717466474"
     dr: "117940112483.dkr.ecr.us-east-1.amazonaws.com/6a97e814-fbe5-4ae3-a3e2-14ca735b5e6b/cg-2648516897"
   versions:
     enterprise: "PortworxEnterprise2.6-latest"
