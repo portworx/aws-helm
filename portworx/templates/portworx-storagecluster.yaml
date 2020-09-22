@@ -1,7 +1,7 @@
 {{- $usefileSystemDrive := .Values.storage.usefileSystemDrive | default false }}
 {{- $drives := .Values.storage.drives | default "none" }}
 {{- $usedrivesAndPartitions := .Values.storage.usedrivesAndPartitions | default false }}
-{{- $maxStorageNodesPerZone := .Values.storage.maxStorageNodesPerZone | default "none" }}
+{{- $maxStorageNodesPerZone := int64 .Values.storage.maxStorageNodesPerZone | int64 }}
 {{- $dataInterface := .Values.dataInterface | default "none" }}
 {{- $managementInterface := .Values.managementInterface | default "none" }}
 {{- $registrySecret := .Values.registrySecret | default "none" }}
@@ -41,9 +41,6 @@ spec:
     forceUseDisks: {{ $usefileSystemDrive }}
     journalDevice: auto
     kvdbDevice: type=gp2,size=150
-    {{- if ne $maxStorageNodesPerZone "none" }}
-    maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
-    {{- end }}
   {{- else }}
   cloudStorage:
     deviceSpecs:
@@ -53,9 +50,12 @@ spec:
     {{- end }}
     journalDevice: auto
     kvdbDeviceSpec: type=gp2,size=150
-    {{- if ne $maxStorageNodesPerZone "none" }}
+    {{- if ne $maxStorageNodesPerZone 0 }}
     maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
     {{- end }}
+  {{- end }}
+  {{- if ne .Values.secretType "k8s" }}
+  secretsProvider: {{ .Values.secretType }}
   {{- end }}
   {{- if or (ne $dataInterface "none") (ne $managementInterface "none") }}
   network:
