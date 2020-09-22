@@ -14,6 +14,7 @@ metadata:
   name: {{ .Values.clusterName }}
   namespace: {{ $namespace }}
   annotations:
+    portworx.io/is-eks: "true"
     portworx.com/install-source: helm/{{.Release.Service}}-r{{.Release.Revision}}
     portworx.com/helm-vars: chart="{{.Chart.Name}}-{{.Chart.Version}}"{{range $k, $v := .Values }}{{if $v}},{{ $k }}="{{ $v }}" {{end}}{{end}}
 spec:
@@ -39,8 +40,8 @@ spec:
     forceUseDisks: {{ $usefileSystemDrive }}
     journalDevice: auto
     kvdbDevice: type=gp2,size=150
-    {{- if ne $maxStorageNodesPerZone  "none" }}
-    maxStorageNodesPerZone: {{ .Values.maxStorageNodesPerZone }}
+    {{- if ne $maxStorageNodesPerZone "none" }}
+    maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
     {{- end }}
   {{- else }}
   cloudStorage:
@@ -51,8 +52,8 @@ spec:
     {{- end }}
     journalDevice: auto
     kvdbDeviceSpec: type=gp2,size=150
-    {{- if ne $maxStorageNodesPerZone  "none" }}
-    maxStorageNodesPerZone: {{ .Values.maxStorageNodesPerZone }}
+    {{- if ne $maxStorageNodesPerZone "none" }}
+    maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
     {{- end }}
   {{- end }}
   {{- if or (ne $dataInterface "none") (ne $managementInterface "none") }}
