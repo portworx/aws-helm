@@ -1,17 +1,17 @@
 apiVersion: v1
 entries:
   portworx:
-  - appVersion: 2.6.1
-    created: "2020-09-22T20:37:08.725301+05:30"
+  - apiVersion: v1
+    appVersion: 2.6.1
+    created: "2020-09-22T08:40:36.502593842-07:00"
     description: A Helm chart for installing Portworx on EKS through the AWS Marketplace.
-    digest: 328f16b94e914c8ab7332fa11af86198432d4b7767d34a91812ed026019986ef
+    digest: a8a4149a807d531ebc830db57ebf7cb83dca139b56945c86c9376b5732f1c6b8
     home: https://portworx.com/
     icon: https://raw.githubusercontent.com/portworx/aws-helm/master/doc/media/px-logo.png
     name: portworx
     sources:
     - https://github.com/portworx/aws-helm
-    tillerVersion: '>=2.9.0'
     urls:
     - https://raw.githubusercontent.com/portworx/aws-helm/master/stable/portworx-1.0.0.tgz
     version: 1.0.0
-generated: "2020-09-22T20:37:08.72219+05:30"
+generated: "2020-09-22T08:40:36.499239445-07:00"
