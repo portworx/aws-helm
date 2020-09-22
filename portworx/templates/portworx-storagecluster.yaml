@@ -17,7 +17,6 @@ metadata:
     portworx.io/is-eks: "true"
     portworx.com/install-source: helm/{{.Release.Service}}-r{{.Release.Revision}}
     portworx.com/helm-vars: chart="{{.Chart.Name}}-{{.Chart.Version}}"{{range $k, $v := .Values }}{{if $v}},{{ $k }}="{{ $v }}" {{end}}{{end}}
-    portworx.io/is-eks: "true"
 spec:
   env:
     {{- if not (eq $serviceAccount "none") }}
