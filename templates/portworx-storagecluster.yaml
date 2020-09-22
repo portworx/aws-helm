@@ -24,6 +24,8 @@ spec:
     {{- end }}
     - name: PX_IMAGE
       value: "{{template "px.getImage" . }}"
+    - name: PX_NAMESPACE
+      value: {{ $namespace }}
   image: "{{template "px.getOCIImage" . }}"
   imagePullPolicy: Always
   {{- if not (eq $registrySecret "none") }}

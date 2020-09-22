@@ -48,7 +48,7 @@ The following tables lists the configurable parameters of the Portworx chart and
 | `storage.usedrivesAndPartitions` | Should Portworx use the drives as well as partitions on the disk ? |
 | `storage.drives` | Semi-colon seperated list of drives to be used for storage (example: "/dev/sda;/dev/sdb"), to auto generate amazon disks use a list of drive specs (example: "type=gp2\,size=150";type=io1\,size=100\,iops=2000"). Make sure you escape the commas |
 | `storage.journalDevice` | Journal device for Portworx metadata |
-| `storage.metadataSize` | 0 |
+| `maxStorageNodesPerZone` | Indicates the maximum number of storage nodes per zone. If this number is reached, and a new node is added to the zone, Portworx doesn’t provision drives for the new node. Instead, Portworx starts the node as a compute-only node. |
 | `network.dataInterface` | Name of the interface <ethX> |
 | `network.managementInterface` | Name of the interface <ethX> |
 | `secretType` | Secrets store to be used can be aws-kms/k8s/none defaults to: none |

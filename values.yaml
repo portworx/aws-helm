@@ -12,7 +12,7 @@ storage:
   drives: none                      # NOTE: This is a ";" seperated list of drives. For eg: "/dev/sda;/dev/sdb;/dev/sdc" Defaults to use -A switch.
                                     # To have drives automatically created specify the drive spec. For Eg: "type=gp2,size=150" or "type=io1,size=100,iops=2000"
   journalDevice:
-  metadataSize: 0
+  maxStorageNodesPerZone:
 
 network:
   dataInterface: none               # Name of the interface <ethX>
