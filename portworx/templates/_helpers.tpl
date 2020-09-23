@@ -29,7 +29,7 @@
     {{- cat (trim .Values.customRegistryURL) "/portworx/oci-monitor:" (trim .Values.versions.ociMon)| replace " " ""}}
   {{- end -}}
 {{- else -}}
-  {{- if eq $product "PX-ENTERPRISE+DR" }}
+  {{- if eq $product "PX-ENTERPRISE-DR" }}
     {{- cat (trim .Values.aws.repos.dr) "/portworx/oci-monitor:" (trim .Values.aws.versions.dr) | replace " " ""}}
   {{- else }}
     {{- cat (trim .Values.aws.repos.enterprise) "/portworx/oci-monitor:" (trim .Values.aws.versions.enterprise) | replace " " ""}}
@@ -46,7 +46,7 @@
     {{- cat (trim .Values.customRegistryURL) "/openstorage/stork:" (trim .Values.versions.stork) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-  {{- if eq $product "PX-ENTERPRISE+DR" }}
+  {{- if eq $product "PX-ENTERPRISE-DR" }}
     {{- cat (trim .Values.aws.repos.dr) "/openstorage/stork:" (trim .Values.aws.versions.dr) | replace " " ""}}
   {{- else }}
     {{- cat (trim .Values.aws.repos.enterprise) "/openstorage/stork:" (trim .Values.aws.versions.enterprise) | replace " " ""}}
@@ -63,7 +63,7 @@
     {{- cat (trim .Values.customRegistryURL) "/portworx/autopilot:" (trim .Values.versions.autoPilot) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-  {{- if eq $product "PX-ENTERPRISE+DR" }}
+  {{- if eq $product "PX-ENTERPRISE-DR" }}
     {{- cat (trim .Values.aws.repos.dr) "/portworx/autopilot:" (trim .Values.aws.versions.dr) | replace " " ""}}
   {{- else }}
     {{- cat (trim .Values.aws.repos.enterprise) "/portworx/autopilot:" (trim .Values.aws.versions.enterprise) | replace " " ""}}
@@ -80,7 +80,7 @@
     {{- cat (trim .Values.customRegistryURL) "/portworx/px-operator:" (trim .Values.versions.operator) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-  {{- if eq $product "PX-ENTERPRISE+DR" }}
+  {{- if eq $product "PX-ENTERPRISE-DR" }}
     {{- cat (trim .Values.aws.repos.dr) "/portworx/px-operator:" (trim .Values.aws.versions.dr) | replace " " ""}}
   {{- else }}
     {{- cat (trim .Values.aws.repos.enterprise) "/portworx/px-operator:" (trim .Values.aws.versions.enterprise) | replace " " ""}}
