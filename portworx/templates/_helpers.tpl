@@ -8,7 +8,7 @@
 {{- end -}}
 
 {{- define "px.getImage" -}}
-{{- $product := .Values.awsProductID | default "PX-ENTERPRISE" }}
+{{- $product := .Values.awsProduct | default "PX-ENTERPRISE" }}
 {{- if (.Values.customRegistryURL) -}}
   {{- if (eq "/" (.Values.customRegistryURL | regexFind "/")) -}}
     {{- cat (trim .Values.customRegistryURL) "/px-enterprise:" (trim .Values.versions.enterprise) | replace " " ""}}
@@ -21,7 +21,7 @@
 {{- end -}}
 
 {{- define "px.getOCIImage" -}}
-{{- $product := .Values.awsProductID | default "PX-ENTERPRISE" }}
+{{- $product := .Values.awsProduct | default "PX-ENTERPRISE" }}
 {{- if (.Values.customRegistryURL) -}}
   {{- if (eq "/" (.Values.customRegistryURL | regexFind "/")) -}}
     {{- cat (trim .Values.customRegistryURL) "/oci-monitor:" (trim .Values.versions.ociMon) | replace " " ""}}
@@ -38,7 +38,7 @@
 {{- end -}}
 
 {{- define "px.getStorkImage" -}}
-{{- $product := .Values.awsProductID | default "PX-ENTERPRISE" }}
+{{- $product := .Values.awsProduct | default "PX-ENTERPRISE" }}
 {{- if (.Values.customRegistryURL) -}}
   {{- if (eq "/" (.Values.customRegistryURL | regexFind "/")) -}}
     {{- cat (trim .Values.customRegistryURL) "/stork:" (trim .Values.versions.stork)| replace " " ""}}
@@ -55,7 +55,7 @@
 {{- end -}}
 
 {{- define "px.getAutopilotImage" -}}
-{{- $product := .Values.awsProductID | default "PX-ENTERPRISE" }}
+{{- $product := .Values.awsProduct | default "PX-ENTERPRISE" }}
 {{- if (.Values.customRegistryURL) -}}
   {{- if (eq "/" (.Values.customRegistryURL | regexFind "/")) -}}
     {{- cat (trim .Values.customRegistryURL) "/autopilot:" (trim .Values.versions.autoPilot) | replace " " ""}}
@@ -72,7 +72,7 @@
 {{- end -}}
 
 {{- define "px.getOperatorImage" -}}
-{{- $product := .Values.awsProductID | default "PX-ENTERPRISE" }}
+{{- $product := .Values.awsProduct | default "PX-ENTERPRISE" }}
 {{- if (.Values.customRegistryURL) -}}
   {{- if (eq "/" (.Values.customRegistryURL | regexFind "/")) -}}
     {{- cat (trim .Values.customRegistryURL) "/px-operator:" (trim .Values.versions.operator) | replace " " ""}}
