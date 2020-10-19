@@ -1,5 +1,5 @@
 name: portworx
-version: 1.0.0
+version: 1.0.1
 appVersion: "2.6.1"
 description: A Helm chart for installing Portworx on EKS through the AWS Marketplace.
 tillerversion: ">=2.9.0"
