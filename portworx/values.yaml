@@ -30,17 +30,11 @@ registrySecret:
 
 serviceAccount:
 
-aws:
-  repos:
-    enterprise: "117940112483.dkr.ecr.us-east-1.amazonaws.com/3a3fcb1c-7ee5-4f3b-afe3-d293c3f9beb4/cg-2952265234"
-    dr: "117940112483.dkr.ecr.us-east-1.amazonaws.com/6a97e814-fbe5-4ae3-a3e2-14ca735b5e6b/cg-3670726547"
-  versions:
-    enterprise: "PortworxEnterprise2.6-latest"
-    dr: "PortworxEnterprise2.6-latest"
+repo: "709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx"
 
 versions:
-  operator: "1.4.0"
-  enterprise: "2.6.1"
-  ociMon: "2.6.1"
+  operator: "1.4.2"
+  enterprise: "2.6.2.1"
+  ociMon: "2.6.2.1"
   autoPilot: "1.3.0"
-  stork: "2.5.0"
+  stork: "2.6.1"

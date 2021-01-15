@@ -1,6 +1,5 @@
 {{- $registrySecret := .Values.registrySecret | default "none" }}
 {{- $namespace := .Values.namespace | default "kube-system" }}
-# SOURCE: https://install.portworx.com/?comp=pxoperator
 apiVersion: v1
 kind: ServiceAccount
 metadata:
