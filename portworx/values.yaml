@@ -30,7 +30,9 @@ registrySecret:
 
 serviceAccount:
 
-repo: "709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx"
+repo:
+  enterprise: "709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx"
+  dr: "709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr"
 
 versions:
   operator: "1.4.2"

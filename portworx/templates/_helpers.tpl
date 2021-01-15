@@ -29,7 +29,11 @@
     {{- cat (trim .Values.customRegistryURL) "/portworx/oci-monitor:" (trim .Values.versions.ociMon)| replace " " ""}}
   {{- end -}}
 {{- else -}}
-    {{- cat (trim .Values.repo) "/oci-monitor:" (trim .Values.versions.ociMon) | replace " " ""}}
+  {{- if eq $product "PX-ENTERPRISE-DR" }}
+    {{- cat (trim .Values.repo.dr) "/oci-monitor:" (trim .Values.versions.ociMon) | replace " " ""}}
+  {{- else }}
+    {{- cat (trim .Values.repo.enterprise) "/oci-monitor:" (trim .Values.versions.ociMon) | replace " " ""}}
+  {{- end }}
 {{- end -}}
 {{- end -}}
 
@@ -42,7 +46,11 @@
     {{- cat (trim .Values.customRegistryURL) "/openstorage/stork:" (trim .Values.versions.stork) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-    {{- cat (trim .Values.repo) "/stork:" (trim .Values.versions.stork) | replace " " ""}}
+  {{- if eq $product "PX-ENTERPRISE-DR" }}
+    {{- cat (trim .Values.repo.dr) "/stork:" (trim .Values.versions.stork) | replace " " ""}}
+  {{- else }}
+    {{- cat (trim .Values.repo.enterprise) "/stork:" (trim .Values.versions.stork) | replace " " ""}}
+  {{- end }}
 {{- end -}}
 {{- end -}}
 
@@ -55,7 +63,11 @@
     {{- cat (trim .Values.customRegistryURL) "/portworx/autopilot:" (trim .Values.versions.autoPilot) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-    {{- cat (trim .Values.repo) "/autopilot:" (trim .Values.versions.autoPilot) | replace " " ""}}
+  {{- if eq $product "PX-ENTERPRISE-DR" }}
+    {{- cat (trim .Values.repo.dr) "/autopilot:" (trim .Values.versions.autoPilot) | replace " " ""}}
+  {{- else }}
+    {{- cat (trim .Values.repo.enterprise) "/autopilot:" (trim .Values.versions.autoPilot) | replace " " ""}}
+  {{- end }}
 {{- end -}}
 {{- end -}}
 
@@ -68,6 +80,10 @@
     {{- cat (trim .Values.customRegistryURL) "/portworx/px-operator:" (trim .Values.versions.operator) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-    {{- cat (trim .Values.repo) "/px-operator:" (trim .Values.versions.operator) | replace " " ""}}
+  {{- if eq $product "PX-ENTERPRISE-DR" }}
+    {{- cat (trim .Values.repo.dr) "/px-operator:" (trim .Values.versions.operator) | replace " " ""}}
+  {{- else }}
+    {{- cat (trim .Values.repo.enterprise) "/px-operator:" (trim .Values.versions.operator) | replace " " ""}}
+  {{- end }}
 {{- end -}}
 {{- end -}}
