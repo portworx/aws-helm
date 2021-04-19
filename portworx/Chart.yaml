@@ -6,4 +6,4 @@ tillerversion: ">=2.9.0"
 home: https://portworx.com/
 sources:
   - https://github.com/portworx/aws-helm
-icon: https://raw.githubusercontent.com/portworx/aws-helm/master/doc/media/px-logo.png
+icon: https://raw.githubusercontent.com/portworx/aws-helm/master/doc/media/px-logo.png 
