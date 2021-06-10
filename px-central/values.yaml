@@ -13,10 +13,12 @@ persistentStorage:
     storage: 2Gi
   mysqlVolumeSize: "100Gi"
   etcdVolumeSize: "64Gi"
+  mongodbVolumeSize: "64Gi"
   keycloakThemeVolumeSize: "5Gi"
   keycloakBackendVolumeSize: "10Gi"
 
 storkRequired: false
+nodeAffinityLabel: ""
 
 pxcentralDBPassword: Password1
 caCertsSecretName: ""

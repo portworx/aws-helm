@@ -16,6 +16,8 @@ data:
   setup.sh: |-
     #!/bin/bash
 
+    . /opt/bitnami/scripts/mongodb-env.sh
+
     echo "Advertised Hostname: $MONGODB_ADVERTISED_HOSTNAME"
 
     if [[ "$MY_POD_NAME" = "pxc-backup-mongodb-0" ]]; then
@@ -90,8 +92,8 @@ spec:
       app.kubernetes.io/instance: {{.Release.Name }}
       app.kubernetes.io/managed-by: {{.Release.Service }}
       app.kubernetes.io/component: pxc-backup-mongodb
-  serviceName: pxc-backup-mongodb-headless
-  podManagementPolicy: OrderedReady
+  serviceName: pxc-backup-mongodb-headless 
+  podManagementPolicy: Parallel
   replicas: 3
   updateStrategy:
     type: RollingUpdate
@@ -108,8 +110,8 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              {{- if .Values.pxbackup.nodeAffinityLabel }}
-              - key: {{ .Values.pxbackup.nodeAffinityLabel }}
+              {{- if .Values.nodeAffinityLabel }}
+              - key: {{ .Values.nodeAffinityLabel }}
                 operator: Exists
               {{- else }}
               - key: pxbackup/enabled
@@ -245,7 +247,7 @@ spec:
           - "ReadWriteOnce"
         resources:
           requests:
-            storage: {{ .Values.persistentStorage.etcdVolumeSize }}
+            storage: {{ .Values.persistentStorage.mongodbVolumeSize }}
         {{- if .Values.persistentStorage.storageClassName }}
         storageClassName: {{ .Values.persistentStorage.storageClassName }}
         {{- end }}
