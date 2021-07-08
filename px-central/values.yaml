@@ -2,7 +2,7 @@ persistentStorage:
   enabled: true
   storageClassName:
   cassandra:
-    storage: 50Gi
+    storage: 8Gi
   grafana:
     storage: 20Gi
   consul:
@@ -14,6 +14,7 @@ persistentStorage:
   mysqlVolumeSize: "100Gi"
   etcdVolumeSize: "64Gi"
   mongodbVolumeSize: "64Gi"
+  mongoCacheSize: 4
   keycloakThemeVolumeSize: "5Gi"
   keycloakBackendVolumeSize: "10Gi"
 
@@ -60,17 +61,21 @@ pxlicenseserver:
   mainNodeIP: ""
   backupNodeIP: ""
   adminUserName: admin
-  adminUserPassword: Password@1
+  adminUserPassword: Adm1n!Ur
 
 pxmonitor:
   enabled: false
   pxCentralEndpoint: 
   sslEnabled: false
   oidcClientID: pxcentral
-  nodeAffinityLabel:
+  consulBindInterface: ""
+  cortex:
+    alertmanager:
+        advertiseAddress: ""
 
 service:
   pxCentralUIServiceType: "LoadBalancer"
+  pxBackupUIServiceType: "LoadBalancer"
   grafanaServiceType: "NodePort"
   cortexNginxServiceType: "NodePort"
 
@@ -113,27 +118,27 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 1.3.0-rc1
+    tag: 2.0.0-dev
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend-private
-    tag: 2.0.0-rc1
+    tag: 2.0.0-dev
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend-private
-    tag: 2.0.0-rc1
+    tag: 2.0.0-dev
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend-private
-    tag: 2.0.0.-rc1-eeabc2191cf7 
+    tag: 2.0.0-dev
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 1.3.0-rc1
+    tag: 2.0.0-dev
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
@@ -166,7 +171,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup-base
-    tag: 2.0.0-rc1
+    tag: 2.0.0-dev
   etcdImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
