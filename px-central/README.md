@@ -12,7 +12,7 @@ helm repo add portworx https://raw.githubusercontent.com/portworx/aws-helm/maste
 
 To install the chart with the release name `central` run the following commands substituting relevant values for your setup
 ```
-helm install px-central portworx/px-central --namespace px-backup --set persistentStorage.enabled=true,persistentStorage.storageClassName=gp2,pxbackup.enabled=true,pxbackup.datastore=mongodb
+helm install px-central portworx/px-central --namespace px-backup --set persistentStorage.enabled=true,persistentStorage.storageClassName=gp2,pxbackup.enabled=true,pxbackup.datastore=mongodb --create-namespace
 ```
 
 #### Preparing your EKS Cluster
@@ -33,6 +33,34 @@ eksctl create iamserviceaccount --name px-backup-account  --namespace px-backup 
 
 This will create an `IAMServiceAccount` on amazon `https://console.aws.amazon.com/iam/home?#/roles` and
 will update existing `ServiceAcccount (px-backup-account)`
+
+## Uninstalling the Chart
+1. To uninstall/delete the `px-central` chart:
+
+```console
+$ helm delete px-central --namespace px-backup
+```
+
+2. To cleanup secrets and pvc created by px-backup:
+
+```console
+$ kubectl delete ns px-backup
+```
+
+### Access PX-Backup UI using Loadbalancer Endpoint:
+1. Get the loadbalancer endpoint (LB_ENDPOINT) using following commands:
+   - HOST: 
+   ```console
+   $ kubectl get ingress --namespace {{ .Release.Namespace }} px-backup-ui -o jsonpath="{.status.loadBalancer.ingress[0].hostname}"`
+   ```
+   - IP:
+   ```console
+   $ kubectl get ingress --namespace {{ .Release.Namespace }} px-backup-ui -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+   ```
+  
+2. PX-Backup UI endpoint: `http://LB_ENDPOINT`
+
+3. Keycloak UI endpoint: `http://LB_ENDPOINT/auth`
 
 ## Parameters
 
@@ -131,9 +159,6 @@ Parameter | Description | Default
 `images.mongodbImage.repo` | PX-Backup etcd image repo | `bitnami`
 `images.mongodbImage.imageName` | PX-Backup etcd image name | `mongodb`
 `images.mongodbImage.tag` | PX-Backup etcd image tag | `4.4.4-debian-10-r30`
-
-## Documentation
-[TO be added]
 
 ## Support
 
