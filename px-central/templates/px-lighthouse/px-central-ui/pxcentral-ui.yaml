@@ -264,7 +264,7 @@ metadata:
   labels:
     run: pxcentral-frontend
     app.kubernetes.io/component: pxcentral-frontend
-{{- include "px-central.labels" . | nindent 4 }} 
+{{- include "px-central.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -483,7 +483,7 @@ spec:
                       password_aux=$(cat $MYSQL_ROOT_PASSWORD_FILE)
                   fi
                   mysqladmin status -uroot -p$password_aux
-            initialDelaySeconds: 120
+            initialDelaySeconds: 600
             periodSeconds: 10
             timeoutSeconds: 5
             successThreshold: 1
@@ -501,7 +501,7 @@ spec:
                       password_aux=$(cat $MYSQL_ROOT_PASSWORD_FILE)
                   fi
                   mysqladmin status -uroot -p$password_aux
-            initialDelaySeconds: 120
+            initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 5
             successThreshold: 1
