@@ -1,0 +1,185 @@
+persistentStorage:
+  enabled: true
+  storageClassName:
+  cassandra:
+    storage: 64Gi
+  grafana:
+    storage: 20Gi
+  consul:
+    storage: 8Gi
+  alertManager:
+    storage: 2Gi
+  ingester:
+    storage: 2Gi
+  mysqlVolumeSize: "100Gi"
+  etcdVolumeSize: "64Gi"
+  mongodbVolumeSize: "64Gi"
+  mongoCacheSize: 4
+  keycloakThemeVolumeSize: "5Gi"
+  keycloakBackendVolumeSize: "10Gi"
+
+storkRequired: false
+nodeAffinityLabel: ""
+
+pxcentralDBPassword: Password1
+caCertsSecretName: ""
+ 
+oidc:
+  centralOIDC:
+    enabled: true
+    defaultUsername: admin
+    defaultPassword: admin
+    defaultEmail: admin@portworx.com
+    keyCloakBackendUserName: keycloak
+    keyCloakBackendPassword: keycloak
+    clientId: "pxcentral"
+    updateAdminProfile: true
+
+  externalOIDC:
+    enabled: false
+    clientID:
+    clientSecret:
+    endpoint:
+
+pxbackup:
+  enabled: true
+  orgName: default
+  callHome: true
+  nodeAffinityLabel:
+  datastore: mongodb
+  mongoMigration: complete
+  retainEtcd: false
+
+pxlicenseserver:
+  enabled: false
+  internal:
+    enabled: true
+    lsTypeUAT: false
+    lsTypeAirgapped: false
+  external:
+    enabled: false
+  mainNodeIP: ""
+  backupNodeIP: ""
+  adminUserName: admin
+  adminUserPassword: Adm1n!Ur
+
+pxmonitor:
+  enabled: false
+  pxCentralEndpoint: 
+  sslEnabled: false
+  oidcClientID: pxcentral
+  consulBindInterface: ""
+  cortex:
+    alertmanager:
+        advertiseAddress: ""
+
+service:
+  pxCentralUIServiceType: "LoadBalancer"
+  pxBackupUIServiceType: "LoadBalancer"
+  grafanaServiceType: "NodePort"
+  cortexNginxServiceType: "NodePort"
+
+## Memory settings: These are calculated automatically unless specified otherwise
+## To run on environments with little resources (<= 8GB), tune your heap settings:
+## maxHeapSize:
+## - calculate 1/2 ram and cap to 1024MB
+## - calculate 1/4 ram and cap to 8192MB
+## - pick the max
+## newHeapSize:
+## A good guideline is 100 MB per CPU core.
+## - min(100 * num_cores, 1/4 * heap size)
+##
+# maxHeapSize: 4G
+# newHeapSize: 800M
+
+cassandra:
+  jvm:
+    maxHeapSize:
+    newHeapSize:
+
+installCRDs: false
+clusterDomain: "cluster.local"
+cassandraUsername: cassandra
+cassandraPassword: cassandra
+
+operatorToChartUpgrade: false
+
+securityContext:
+  runAsUser: 1000
+  fsGroup: 1000
+  runAsNonRoot: true
+
+images:
+  pullSecrets:
+    - docregistry-secret
+  pullPolicy: Always
+
+  pxcentralApiServerImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: pxcentral-onprem-api
+    tag: 2.0.0-7a2529e
+  pxcentralFrontendImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: pxcentral-onprem-ui-frontend
+    tag: 2.0.0-3c831ae08
+  pxcentralBackendImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: pxcentral-onprem-ui-backend
+    tag: 2.0.0-3c831ae08
+  pxcentralMiddlewareImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: pxcentral-onprem-ui-lhbackend
+    tag: 2.0.0-4244a922
+  postInstallSetupImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: pxcentral-onprem-post-setup
+    tag: 2.0.0-6fb503f
+  keycloakBackendImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx/bitnami
+    imageName: postgresql
+    tag: 11.7.0-debian-10-r9
+  keycloakFrontendImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx/jboss
+    imageName: keycloak
+    tag: 9.0.2
+  keycloakLoginThemeImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: keycloak-login-theme
+    tag: 1.0.4
+  keycloakInitContainerImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx/library
+    imageName: busybox
+    tag: 1.31
+  mysqlImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx/library
+    imageName: mysql
+    tag: 5.7.22
+
+  ## Images required for enabling px-backup
+
+  pxBackupImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: px-backup
+    tag: 2.0.0-6ca069f
+  etcdImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx/bitnami
+    imageName: etcd
+    tag: 3.4.13-debian-10-r22
+  mongodbImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx/bitnami
+    imageName: mongodb
+    tag: 4.4.4-debian-10-r30
+
