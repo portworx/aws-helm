@@ -12,7 +12,12 @@ helm repo add portworx https://raw.githubusercontent.com/portworx/aws-helm/maste
 
 To install the chart with the release name `central` run the following commands substituting relevant values for your setup
 ```
-helm install px-central portworx/px-central --namespace px-backup --set persistentStorage.enabled=true,persistentStorage.storageClassName=gp2,pxbackup.enabled=true,pxbackup.datastore=mongodb --create-namespace
+helm install px-central portworx/px-central --namespace px-backup --set persistentStorage.enabled=true,persistentStorage.storageClassName=gp2,pxbackup.enabled=true --create-namespace
+```
+
+User can set a custom password for the UI by using the option `oidc.centralOIDC.defaultPassword`. This will override default `admin` password
+```
+helm install px-central portworx/px-central --namespace px-backup --set persistentStorage.enabled=true,persistentStorage.storageClassName=gp2,pxbackup.enabled=true,oidc.centralOIDC.defaultPassword=testpassword --create-namespace
 ```
 
 #### Preparing your EKS Cluster
