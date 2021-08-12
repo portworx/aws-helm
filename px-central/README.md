@@ -7,12 +7,12 @@ This chart also supports following features but by default those are disabled.
 #### Installation
 To add the Portworx AWS Helm repository run the following command:
 ```
-helm repo add portworx https://raw.githubusercontent.com/portworx/aws-helm/master/stable
+helm repo add aws-portworx https://raw.githubusercontent.com/portworx/aws-helm/master/stable
 ```
 
 To install the chart with the release name `central` run the following commands substituting relevant values for your setup
 ```
-helm install px-central portworx/px-central --namespace px-backup --set persistentStorage.enabled=true,persistentStorage.storageClassName=gp2,pxbackup.enabled=true --create-namespace
+helm install px-central aws-portworx/px-central --namespace px-backup --set persistentStorage.enabled=true,persistentStorage.storageClassName=gp2,pxbackup.enabled=true --create-namespace
 ```
 
 User can set a custom password for the UI by using the option `oidc.centralOIDC.defaultPassword`. This will override default `admin` password
@@ -43,24 +43,24 @@ will update existing `ServiceAcccount (px-backup-account)`
 1. To uninstall/delete the `px-central` chart:
 
 ```console
-$ helm delete px-central --namespace px-backup
+  helm delete px-central --namespace px-backup
 ```
 
 2. To cleanup secrets and pvc created by px-backup:
 
 ```console
-$ kubectl delete ns px-backup
+  kubectl delete ns px-backup
 ```
 
 ### Access PX-Backup UI using Loadbalancer Endpoint:
 1. Get the loadbalancer endpoint (LB_ENDPOINT) using following commands:
    - HOST: 
    ```console
-   $ kubectl get ingress --namespace {{ .Release.Namespace }} px-backup-ui -o jsonpath="{.status.loadBalancer.ingress[0].hostname}"`
+     kubectl get ingress --namespace {{ .Release.Namespace }} px-backup-ui -o jsonpath="{.status.loadBalancer.ingress[0].hostname}"`
    ```
    - IP:
    ```console
-   $ kubectl get ingress --namespace {{ .Release.Namespace }} px-backup-ui -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+     kubectl get ingress --namespace {{ .Release.Namespace }} px-backup-ui -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`
    ```
   
 2. PX-Backup UI endpoint: `http://LB_ENDPOINT`
