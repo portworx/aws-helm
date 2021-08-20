@@ -10,7 +10,7 @@ To add the Portworx AWS Helm repository run the following command:
 helm repo add aws-portworx https://raw.githubusercontent.com/portworx/aws-helm/master/stable
 ```
 
-To install the chart with the release name `central` run the following commands substituting relevant values for your setup
+To install the chart with the release name `px-central` run the following commands substituting relevant values for your setup
 ```
 helm install px-central aws-portworx/px-central --namespace px-backup --set persistentStorage.enabled=true,persistentStorage.storageClassName=gp2,pxbackup.enabled=true --create-namespace
 ```
