@@ -8,7 +8,7 @@
 {{- $namespace := .Values.namespace | default "kube-system" }}
 {{- $serviceAccount := .Values.serviceAccount | default "none" }}
 
-apiVersion: core.libopenstorage.org/v1alpha1
+apiVersion: core.libopenstorage.org/v1
 kind: StorageCluster
 metadata:
   name: {{ .Values.clusterName }}
@@ -47,7 +47,7 @@ spec:
     {{- range $index, $name := $driveNames }}
     - {{ $name }}
     {{- end }}
-    journalDevice: auto
+    journalDeviceSpec: auto
     kvdbDeviceSpec: type=gp2,size=150
     {{- if ne $maxStorageNodesPerZone 0 }}
     maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
