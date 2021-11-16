@@ -121,37 +121,37 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.0.1-02ec383
+    tag: 2.1.0-02ec383
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.0.1-3edda14d6
+    tag: 2.1.0-e7d5e7520
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.0.1-3edda14d6
+    tag: 2.1.0-e7d5e7520
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.0.1-4163e405
+    tag: 2.1.0-bd324ac9
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.0.1-342a262
+    tag: 2.1.0-285751c
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
     imageName: postgresql
-    tag: 11.7.0-debian-10-r9
+    tag: 11.13.0-debian-10-r19
   keycloakFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/jboss
     imageName: keycloak
-    tag: 14.0.0
+    tag: 14.0.0-v2
   keycloakLoginThemeImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
@@ -166,7 +166,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
     imageName: mysql
-    tag: 5.7.22
+    tag: 5.7.35
 
   ## Images required for enabling px-backup
 
@@ -174,7 +174,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.0.1-09d8bad
+    tag: 2.1.0-a832f94
   etcdImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
