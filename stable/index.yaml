@@ -3,7 +3,7 @@ entries:
   portworx:
   - apiVersion: v1
     appVersion: 2.8.1
-    created: "2021-11-29T11:45:58.435706884-08:00"
+    created: "2021-12-06T23:22:50.368639+05:30"
     description: A Helm chart for installing Portworx on EKS through the AWS Marketplace.
     digest: 618013189e439fc099c7557931df9e502ea0438ba91cf54338ae3ff5460ea357
     home: https://portworx.com/
@@ -16,7 +16,7 @@ entries:
     version: 1.0.3
   - apiVersion: v1
     appVersion: 2.6.2.1
-    created: "2021-11-29T11:45:58.431810176-08:00"
+    created: "2021-12-06T23:22:50.366091+05:30"
     description: A Helm chart for installing Portworx on EKS through the AWS Marketplace.
     digest: 4b40fb293c15b81e98a981da9b2b04fbacf7ec853eab4ca8ed2bf09a2c2989f9
     home: https://portworx.com/
@@ -29,7 +29,7 @@ entries:
     version: 1.0.2
   - apiVersion: v1
     appVersion: 2.6.1
-    created: "2021-11-29T11:45:58.428317327-08:00"
+    created: "2021-12-06T23:22:50.36398+05:30"
     description: A Helm chart for installing Portworx on EKS through the AWS Marketplace.
     digest: f62ba26aec43fd96faba2db500a1867720fa5cc95c379719e6d0b29f7202e270
     home: https://portworx.com/
@@ -42,7 +42,7 @@ entries:
     version: 1.0.1
   - apiVersion: v1
     appVersion: 2.6.1
-    created: "2021-11-29T11:45:58.423782981-08:00"
+    created: "2021-12-06T23:22:50.361563+05:30"
     description: A Helm chart for installing Portworx on EKS through the AWS Marketplace.
     digest: f6041b68d76915b1ac5f4cff0d6a22c2fa701747f9f34a764f55358bac6c5a7f
     home: https://portworx.com/
@@ -56,9 +56,9 @@ entries:
   px-central:
   - apiVersion: v1
     appVersion: 2.1.0
-    created: "2021-11-29T11:45:58.446186056-08:00"
+    created: "2021-12-06T23:22:50.377433+05:30"
     description: A Helm chart for installing PX-Central on Kubernetes and Openshift
-    digest: a5d305c5d21d75f574f64d4453ede164a7c392b776c85c84440eaa5e73fcb231
+    digest: 059a66b47ecd5c03130bfd3c9edcb2a631bbc47bd76c511c4aab1f59ec7723d3
     home: https://portworx.com/
     icon: https://raw.githubusercontent.com/portworx/aws-helm/master/portworx/doc/media/px-logo.png
     keywords:
@@ -77,7 +77,7 @@ entries:
     version: 2.1.0
   - apiVersion: v1
     appVersion: 2.0.1
-    created: "2021-11-29T11:45:58.443172468-08:00"
+    created: "2021-12-06T23:22:50.375635+05:30"
     description: A Helm chart for installing PX-Central on Kubernetes and Openshift
     digest: baf599a08f0099fc6a449f2368428466597f244ffc0b707a3c87e54d9d852c8b
     home: https://portworx.com/
@@ -98,7 +98,7 @@ entries:
     version: 2.0.1
   - apiVersion: v1
     appVersion: 2.0.0
-    created: "2021-11-29T11:45:58.438660428-08:00"
+    created: "2021-12-06T23:22:50.371603+05:30"
     description: A Helm chart for installing PX-Central on Kubernetes and Openshift
     digest: 7823ef89f0283b262f3c3360f34a5c522613fe27a330fb66d53b95c383e32f2c
     home: https://portworx.com/
@@ -117,4 +117,4 @@ entries:
     urls:
     - https://raw.githubusercontent.com/portworx/aws-helm/master/stable/px-central-2.0.0.tgz
     version: 2.0.0
-generated: "2021-11-29T11:45:58.418697198-08:00"
+generated: "2021-12-06T23:22:50.358577+05:30"
