@@ -121,27 +121,27 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.1.0-02ec383
+    tag: 2.1.1-02ec383
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.1.0-e7d5e7520
+    tag: 2.1.1-cc9d9b5c4
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.1.0-e7d5e7520
+    tag: 2.1.1-cc9d9b5c4
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.1.0-bd324ac9
+    tag: 2.1.1-810e09be
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.1.0-285751c
+    tag: 2.1.1-285751c
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
@@ -174,7 +174,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.1.0-3f6f4d9
+    tag: 2.1.1-48a29ec
   etcdImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
