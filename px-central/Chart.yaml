@@ -5,7 +5,7 @@ icon: https://raw.githubusercontent.com/portworx/aws-helm/master/portworx/doc/me
 keywords:
 - px-backup
 - storage
-- persistent disk
+- persistent disk 
 - pvc
 - portworx
 - px-central
@@ -13,6 +13,6 @@ keywords:
 name: px-central
 sources:
 - https://github.com/portworx/aws-helm/tree/master/charts/px-central
-version: 2.1.1
-appVersion: 2.1.1
+version: 2.2.1
+appVersion: 2.2.1 
 name: px-central

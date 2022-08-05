@@ -12,7 +12,6 @@ persistentStorage:
   ingester:
     storage: 2Gi
   mysqlVolumeSize: "100Gi"
-  etcdVolumeSize: "64Gi"
   mongodbVolumeSize: "64Gi"
   mongoCacheSize: 4
   keycloakThemeVolumeSize: "5Gi"
@@ -121,42 +120,42 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.1.1-02ec383
+    tag: 2.2.1-660ac9a
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.1.1-cc9d9b5c4
+    tag: 2.2.1-b6e1b8e06
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.1.1-cc9d9b5c4
+    tag: 2.2.1-b6e1b8e06
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.1.1-810e09be
+    tag: 2.2.1-17a72532
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.1.1-285751c
+    tag: 2.2.1-447d1f8
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
     imageName: postgresql
-    tag: 11.13.0-debian-10-r19
+    tag: 11.16.0-debian-11-r5
   keycloakFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/jboss
     imageName: keycloak
-    tag: 14.0.0-v2
+    tag: 16.1.1
   keycloakLoginThemeImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: keycloak-login-theme
-    tag: 2.0.1
+    tag: 2.2.0
   keycloakInitContainerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
@@ -166,7 +165,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
     imageName: mysql
-    tag: 5.7.35
+    tag: 5.7.38
 
   ## Images required for enabling px-backup
 
@@ -174,7 +173,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.1.1-48a29ec
+    tag: 2.2.1-fe7c3f8
   etcdImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
