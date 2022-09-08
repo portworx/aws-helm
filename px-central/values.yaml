@@ -19,6 +19,7 @@ persistentStorage:
 
 storkRequired: false
 nodeAffinityLabel: ""
+podAntiAffinity: false
 
 pxcentralDBPassword: Password1
 caCertsSecretName: ""
@@ -47,10 +48,8 @@ pxbackup:
   enabled: true
   orgName: default
   callHome: true
-  nodeAffinityLabel:
-  datastore: mongodb
   mongoMigration: complete
-  retainEtcd: false
+  livenessProbeInitialDelay: 1800
 
 pxlicenseserver:
   enabled: false
@@ -77,7 +76,11 @@ pxmonitor:
 
 service:
   pxCentralUIServiceType: "LoadBalancer"
+  ## To set the LoadBalancer service type to internal only
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  pxCentralUIServiceAnnotations: {}
   pxBackupUIServiceType: "LoadBalancer"
+  pxBackupUIServiceAnnotations: {}
   grafanaServiceType: "NodePort"
   cortexNginxServiceType: "NodePort"
 
@@ -120,27 +123,27 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.2.1-660ac9a
+    tag: 2.3.0-53aea84
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.2.1-b6e1b8e06
+    tag: 2.3.0-76ea3f439
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.2.1-b6e1b8e06
+    tag: 2.3.0-76ea3f439
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.2.1-17a72532
+    tag: 2.3.0-e0c569c5
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.2.1-447d1f8
+    tag: 2.3.0-da68f0b
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
@@ -173,7 +176,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.2.1-fe7c3f8
+    tag: 2.3.0-45b29b4
   etcdImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
@@ -183,5 +186,5 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
     imageName: mongodb
-    tag: 4.4.4-debian-10-r30
+    tag: 5.0.10-debian-11-r3
 
