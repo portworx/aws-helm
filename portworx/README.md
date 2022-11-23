@@ -50,7 +50,6 @@ The following tables lists the configurable parameters of the Portworx chart and
 | `secretType` | Secrets store to be used can be aws-kms/k8s/none defaults to: none |
 | `envVars` | semi-colon-separated list of environment variables that will be exported to portworx. (example: MYENV1=val1;MYENV2=val2) |
 | `serviceAcccount` | Name of the created service account with required IAM permissions |
-| `customRegistryURL` | Custom Image registry |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
