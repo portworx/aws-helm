@@ -26,7 +26,7 @@ csi: false                          # Enable CSI
 internalKVDB: true                  # internal KVDB
 
 customRegistryURL: 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx
-registrySecret:
+registrySecret: regcred
 
 serviceAccount:
 
