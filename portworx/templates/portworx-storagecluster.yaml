@@ -26,7 +26,7 @@ spec:
     {{- end }}
     # TODO: Change this hardcoded image path to an ECR registry path with px-enterprise image (PWX-27961)
     - name: PX_IMAGE
-      value: 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/px-enterprise:pradyuman_2.12.1
+      value: docker.io/portworx/px-enterprise:2.12.1
     - name: PX_NAMESPACE
       value: {{ $namespace }}
   image: "{{template "px.getOCIImage" . }}"
