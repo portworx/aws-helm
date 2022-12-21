@@ -82,7 +82,5 @@ spec:
       type: prometheus
       params:
         url: http://prometheus:9090
-  {{- if .Values.csi }}
-  featureGates:
-    CSI: "true"
-  {{- end }}
+  csi:
+    enabled: {{ .Values.csi  | default "false" }}
