@@ -26,7 +26,7 @@ spec:
     {{- end }}
     # TODO: Change this hardcoded image path to an ECR registry path with px-enterprise image (PWX-27961)
     - name: PX_IMAGE
-      value: docker.io/portworx/px-enterprise:2.12.1
+      value: docker.io/portworx/px-enterprise:2.13.0
     - name: PX_NAMESPACE
       value: {{ $namespace }}
   image: "{{template "px.getOCIImage" . }}"
@@ -64,10 +64,10 @@ spec:
   {{- if or (ne $dataInterface "none") (ne $managementInterface "none") }}
   network:
     {{- if ne $dataInterface "none" }}
-    dataInterface: {{ .Values.dataInterface }}
+    dataInterface: {{ .Values.network.dataInterface }}
     {{- end }}
     {{- if ne $managementInterface "none" }}
-    mgmtInterface: {{ .Values.managementInterface }}
+    mgmtInterface: {{ .Values.network.managementInterface }}
     {{- end }}
   {{- end }}
   secretsProvider: k8s
