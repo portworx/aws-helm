@@ -21,7 +21,7 @@ network:
 secretType: k8s                     # Defaults to k8s, but can be aws-kms/k8s/none
 envVars: none                       # NOTE: This is a ";" seperated list of environment variables. For eg: MYENV1=myvalue1;MYENV2=myvalue2
 
-csi: false                          # Enable CSI
+csi: true                          # Enable CSI
 
 internalKVDB: true                  # internal KVDB
 
@@ -35,8 +35,8 @@ repo:
   dr: "709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr"
 
 versions:
-  operator: "23.3.1"
-  enterprise: "2.13.3"
-  ociMon: "2.13.3"
-  autoPilot: "1.3.7"
-  stork: "23.3.0"
+  operator: "23.5.1-dev"
+  enterprise: "5287b03"
+  ociMon: "98b9aed_5287b03"
+  autoPilot: "1.3.8"
+  stork: "23.6.0"

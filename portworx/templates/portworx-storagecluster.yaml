@@ -26,7 +26,7 @@ spec:
     {{- end }}
     # TODO: Change this hardcoded image path to an ECR registry path with px-enterprise image (PWX-27961)
     - name: PX_IMAGE
-      value: docker.io/portworx/px-enterprise:{{.Values.versions.enterprise}}
+      value: docker.io/portworx/px-base-enterprise:{{.Values.versions.enterprise}}
     - name: PX_NAMESPACE
       value: {{ $namespace }}
   image: "{{template "px.getOCIImage" . }}"
@@ -44,7 +44,7 @@ spec:
     useAllWithPartitions: {{ $usedrivesAndPartitions }}
     forceUseDisks: {{ $usefileSystemDrive }}
     journalDevice: auto
-    kvdbDevice: type=gp2,size=150
+    systemMetadataDeviceSpec: type=gp3,size=64
   {{- else }}
   cloudStorage:
     deviceSpecs:
@@ -53,7 +53,7 @@ spec:
     - {{ $name }}
     {{- end }}
     journalDeviceSpec: auto
-    kvdbDeviceSpec: type=gp2,size=150
+    systemMetadataDeviceSpec: type=gp3,size=64
     {{- if ne $maxStorageNodesPerZone 0 }}
     maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
     {{- end }}
@@ -83,4 +83,4 @@ spec:
       params:
         url: http://prometheus:9090
   csi:
-    enabled: {{ .Values.csi  | default "false" }}
+    enabled: {{ .Values.csi  | default "true" }}
