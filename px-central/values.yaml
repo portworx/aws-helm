@@ -23,7 +23,7 @@ podAntiAffinity: false
 
 pxcentralDBPassword: Password1
 caCertsSecretName: ""
- 
+
 oidc:
   centralOIDC:
     enabled: true
@@ -68,16 +68,18 @@ pxlicenseserver:
 
 pxmonitor:
   enabled: false
-  pxCentralEndpoint: 
+  pxCentralEndpoint:
   sslEnabled: false
   oidcClientID: pxcentral
   consulBindInterface: ""
   cortex:
     alertmanager:
-        advertiseAddress: ""
+      advertiseAddress: ""
 
 service:
   pxCentralUIServiceType: "LoadBalancer"
+  ## To set the LoadBalancer service type to internal only
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
   pxCentralUIServiceAnnotations: {}
   pxBackupUIServiceType: "LoadBalancer"
   pxBackupUIServiceAnnotations: {}
@@ -114,6 +116,15 @@ securityContext:
   fsGroup: 1000
   runAsNonRoot: true
 
+## sample toleration while installing from values.yaml
+# tolerations:
+# - effect: NoSchedule
+#   key: key1
+#   operator: Exists
+#
+## sample toleration while setting the param inline
+# --set 'tolerations[0].operator=Exists,tolerations[0].effect=NoSchedule,tolerations[0].key=key1'
+# ensure toleration param is enclosed with single quotes
 tolerations: []
 
 images:
@@ -148,12 +159,12 @@ images:
     tag: 2.5.0
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/bitnami #check
+    repo: portworx
     imageName: postgresql
     tag: 11.19.0-debian-11-r1
   keycloakFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/jboss
+    repo: portworx
     imageName: keycloak
     tag: 21.1.1
   keycloakLoginThemeImage:
@@ -163,12 +174,12 @@ images:
     tag: 2.2.0
   keycloakInitContainerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/library
+    repo: portworx
     imageName: busybox
     tag: 1.31
   mysqlImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/library
+    repo: portworx
     imageName: mysql
     tag: 5.7.41
 
@@ -181,9 +192,16 @@ images:
     tag: 2.5.0
   mongodbImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/bitnami
+    repo: portworx
     imageName: mongodb
     tag: 5.0.14-debian-11-r27
+
+  ## Images required for enabling px-license-server
+  licenseServerImage:
+    registry: docker.io
+    repo: portworx
+    imageName: px-els
+    tag: 2.3.2
 
   ## Images required for enabling px-monitor
   cortexImage:
