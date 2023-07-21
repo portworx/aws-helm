@@ -44,7 +44,7 @@ spec:
     useAllWithPartitions: {{ $usedrivesAndPartitions }}
     forceUseDisks: {{ $usefileSystemDrive }}
     journalDevice: auto
-    kvdbDevice: type=gp2,size=150
+    systemMetadataDeviceSpec: type=gp3,size=64
   {{- else }}
   cloudStorage:
     deviceSpecs:
@@ -53,7 +53,7 @@ spec:
     - {{ $name }}
     {{- end }}
     journalDeviceSpec: auto
-    kvdbDeviceSpec: type=gp2,size=150
+    systemMetadataDeviceSpec: type=gp3,size=64
     {{- if ne $maxStorageNodesPerZone 0 }}
     maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
     {{- end }}
@@ -83,4 +83,4 @@ spec:
       params:
         url: http://prometheus:9090
   csi:
-    enabled: {{ .Values.csi  | default "false" }}
+    enabled: {{ .Values.csi  | default "true" }}
