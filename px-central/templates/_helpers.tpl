@@ -34,7 +34,6 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "px-central.labels" -}}
-helm.sh/chart: {{ include "px-central.chart" . }}
 app.kubernetes.io/name: {{ template "px-central.name" . }}
 app.kubernetes.io/instance: {{.Release.Name | quote }}
 app.kubernetes.io/managed-by: {{.Release.Service | quote }}
@@ -61,3 +60,16 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Renders a value that contains template.
+Usage:
+{{ include "pxcentral.render" ( dict "value" .Values.path.to.the.Value "context" $) }}
+*/}}
+{{- define "pxcentral.render" -}}
+    {{- if typeIs "string" .value }}
+        {{- tpl .value .context }}
+    {{- else }}
+        {{- tpl (.value | toYaml) .context }}
+    {{- end }}
+{{- end -}}

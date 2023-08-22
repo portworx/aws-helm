@@ -19,10 +19,11 @@ persistentStorage:
 
 storkRequired: false
 nodeAffinityLabel: ""
+podAntiAffinity: false
 
 pxcentralDBPassword: Password1
 caCertsSecretName: ""
- 
+
 oidc:
   centralOIDC:
     enabled: true
@@ -44,13 +45,13 @@ postInstallJob:
   sslEnabled: true
 
 pxbackup:
-  enabled: true
+  enabled: false
   orgName: default
   callHome: true
-  nodeAffinityLabel:
-  datastore: mongodb
   mongoMigration: complete
-  retainEtcd: false
+  livenessProbeInitialDelay: 1800
+  nfs:
+    enabled: true
 
 pxlicenseserver:
   enabled: false
@@ -67,17 +68,21 @@ pxlicenseserver:
 
 pxmonitor:
   enabled: false
-  pxCentralEndpoint: 
+  pxCentralEndpoint:
   sslEnabled: false
   oidcClientID: pxcentral
   consulBindInterface: ""
   cortex:
     alertmanager:
-        advertiseAddress: ""
+      advertiseAddress: ""
 
 service:
   pxCentralUIServiceType: "LoadBalancer"
+  ## To set the LoadBalancer service type to internal only
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  pxCentralUIServiceAnnotations: {}
   pxBackupUIServiceType: "LoadBalancer"
+  pxBackupUIServiceAnnotations: {}
   grafanaServiceType: "NodePort"
   cortexNginxServiceType: "NodePort"
 
@@ -111,6 +116,17 @@ securityContext:
   fsGroup: 1000
   runAsNonRoot: true
 
+## sample toleration while installing from values.yaml
+# tolerations:
+# - effect: NoSchedule
+#   key: key1
+#   operator: Exists
+#
+## sample toleration while setting the param inline
+# --set 'tolerations[0].operator=Exists,tolerations[0].effect=NoSchedule,tolerations[0].key=key1'
+# ensure toleration param is enclosed with single quotes
+tolerations: []
+
 images:
   pullSecrets:
     - docregistry-secret
@@ -120,37 +136,37 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.2.1-660ac9a
+    tag: 2.5.0
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.2.1-b6e1b8e06
+    tag: 2.5.0
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.2.1-b6e1b8e06
+    tag: 2.5.0
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.2.1-17a72532
+    tag: 2.5.0
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.2.1-447d1f8
+    tag: 2.5.0
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/bitnami
+    repo: portworx
     imageName: postgresql
-    tag: 11.16.0-debian-11-r5
+    tag: 11.19.0-debian-11-r1
   keycloakFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/jboss
+    repo: portworx
     imageName: keycloak
-    tag: 16.1.1
+    tag: 21.1.1
   keycloakLoginThemeImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
@@ -158,14 +174,14 @@ images:
     tag: 2.2.0
   keycloakInitContainerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/library
+    repo: portworx
     imageName: busybox
     tag: 1.31
   mysqlImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/library
+    repo: portworx
     imageName: mysql
-    tag: 5.7.38
+    tag: 5.7.41
 
   ## Images required for enabling px-backup
 
@@ -173,15 +189,78 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.2.1-fe7c3f8
-  etcdImage:
-    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/bitnami
-    imageName: etcd
-    tag: 3.4.13-debian-10-r22
+    tag: 2.5.0
   mongodbImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/bitnami
+    repo: portworx
     imageName: mongodb
-    tag: 4.4.4-debian-10-r30
+    tag: 5.0.14-debian-11-r27
 
+  ## Images required for enabling px-license-server
+  licenseServerImage:
+    registry: docker.io
+    repo: portworx
+    imageName: px-els
+    tag: 2.3.2
+
+  ## Images required for enabling px-monitor
+  cortexImage:
+    registry: docker.io
+    repo: portworx
+    imageName: cortex
+    tag: v1.13.1
+  cassandraImage:
+    registry: docker.io
+    repo: portworx
+    imageName: cassandra
+    tag: 4.0.7-debian-11-r34
+  proxyConfigImage:
+    registry: docker.io
+    repo: portworx
+    imageName: nginx
+    tag: 1.23.3-alpine-slim
+  consulImage:
+    registry: docker.io
+    repo: portworx
+    imageName: consul
+    tag: 1.14.4-debian-11-r4
+  dnsmasqImage:
+    registry: docker.io
+    repo: portworx
+    imageName: go-dnsmasq
+    tag: release-1.0.7-v3
+  grafanaImage:
+    registry: docker.io
+    repo: portworx
+    imageName: grafana
+    tag: 9.1.3
+  prometheusImage:
+    registry: docker.io
+    repo: portworx
+    imageName: prometheus
+    tag: v2.35.0
+  prometheusConfigReloadrImage:
+    registry: docker.io
+    repo: portworx
+    imageName: prometheus-config-reloader
+    tag: v0.56.3
+  prometheusOperatorImage:
+    registry: docker.io
+    repo: portworx
+    imageName: prometheus-operator
+    tag: v0.56.3
+  memcachedMetricsImage:
+    registry: docker.io
+    repo: portworx
+    imageName: memcached-exporter
+    tag: v0.10.0
+  memcachedIndexImage:
+    registry: docker.io
+    repo: portworx
+    imageName: memcached
+    tag: 1.6.17-alpine
+  memcachedImage:
+    registry: docker.io
+    repo: portworx
+    imageName: memcached
+    tag: 1.6.17-alpine

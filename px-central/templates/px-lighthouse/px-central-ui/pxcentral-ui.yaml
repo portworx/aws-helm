@@ -1,6 +1,8 @@
 {{/* Setting defaults if they are omitted. */}}
 {{- $pxMonitorEnabled := .Values.pxmonitor.enabled | default false }}
 {{- $externalPersistentStorageEnabled := .Values.persistentStorage.enabled | default false }}
+{{- $isOpenshiftCluster := .Capabilities.APIVersions.Has "apps.openshift.io/v1" -}}
+{{- $nfsEnabled := .Values.pxbackup.nfs.enabled | default false }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -47,6 +49,7 @@ data:
     server {
       listen  8080;
       server_name localhost;
+      server_tokens off;
       location / {
         root   /usr/share/nginx/html;
         index  index.html index.htm;
@@ -221,6 +224,12 @@ spec:
             - configMapRef:
                 name: pxcentral-ui-configmap
           env:
+            - name: ENABLE_NFS
+              {{- if eq $nfsEnabled true }}
+              value: "true"
+              {{- else }}
+              value: "false"
+              {{- end }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -253,7 +262,16 @@ spec:
         - name: {{ $sec | quote }}
         {{- end }}
       {{- end }}
+      {{- if $isOpenshiftCluster}}
+      {{- else }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+      {{- end }}
       restartPolicy: Always
+      {{- with .Values.tolerations }}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }} 
 status: {}
 ---
 apiVersion: apps/v1
@@ -348,6 +366,10 @@ spec:
             - name: frontend-nginx-configs
               mountPath: /etc/nginx/conf.d
           resources: {}
+      {{- with .Values.tolerations }}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }} 
       volumes:
         - name: frontend-nginx-configs
           configMap:
@@ -357,6 +379,11 @@ spec:
         {{- range $sec := .Values.images.pullSecrets }}
         - name: {{ $sec | quote }}
         {{- end }}
+      {{- end }}
+      {{- if $isOpenshiftCluster}}
+      {{- else }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
       {{- end }}
       restartPolicy: Always
 status: {}
@@ -441,6 +468,11 @@ spec:
         - name: {{ $sec | quote }}
         {{- end }}
       {{- end }}
+      {{- if $isOpenshiftCluster}}
+      {{- else }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+      {{- end }}
       containers:
         - name: mysql
           image: {{ printf "%s/%s/%s:%s" .Values.images.mysqlImage.registry .Values.images.mysqlImage.repo .Values.images.mysqlImage.imageName .Values.images.mysqlImage.tag }}
@@ -508,6 +540,10 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/mysql
               name: pxcentral-mysql
+      {{- with .Values.tolerations }}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }} 
       volumes:
         - name: pxcentral-mysql
           {{- if eq $externalPersistentStorageEnabled true }}
@@ -580,6 +616,10 @@ metadata:
     run: pxcentral-frontend
     app.kubernetes.io/component: pxcentral-frontend
 {{- include "px-central.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.service.pxCentralUIServiceAnnotations }}
+    {{- include "pxcentral.render" (dict "value" .Values.service.pxCentralUIServiceAnnotations "context" $) | nindent 4 }}
+    {{- end }}
 spec:
   type: {{ .Values.service.pxCentralUIServiceType }}
   selector:
@@ -599,6 +639,10 @@ metadata:
     run: pxcentral-frontend
     app.kubernetes.io/component: pxcentral-frontend
 {{- include "px-central.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.service.pxBackupUIServiceAnnotations }}
+    {{- include "pxcentral.render" (dict "value" .Values.service.pxBackupUIServiceAnnotations "context" $) | nindent 4 }}
+    {{- end }}
 spec:
   type: {{ .Values.service.pxBackupUIServiceType }}
   selector:
