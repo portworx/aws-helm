@@ -1,8 +1,16 @@
 {{/* Setting defaults if they are omitted. */}}
 {{- $pxBackupEnabled := .Values.pxbackup.enabled | default false }}
 {{- $isOpenshiftCluster := .Capabilities.APIVersions.Has "apps.openshift.io/v1" -}}
-{{- $nfsEnabled := .Values.pxbackup.nfs.enabled | default false }}
 {{- if eq $pxBackupEnabled true }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: px-backup-account
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: px-backup
+{{- include "px-central.labels" . | nindent 4 }}
+---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -21,14 +29,6 @@ rules:
   - apiGroups: [""]
     resources: ["namespaces"]
     verbs: ["get", "list"]
-{{- if eq $nfsEnabled true }}
-  - apiGroups: [""]
-    resources: ["persistentvolumes"]
-    verbs: ["create", "update", "get", "patch", "list", "delete"]
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    verbs: ["delete"]
-{{- end }}
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -77,17 +77,6 @@ rules:
   - apiGroups: ["apps"]
     resources: ["deployments"]
     verbs: ["get", "list"]
-{{- if eq $nfsEnabled true }}
-  - apiGroups: [""]
-    resources: ["persistentvolumeclaims"]
-    verbs: ["get", "create", "delete", "update", "list"]
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list"]
-  - apiGroups: [""]
-    resources: ["events"]
-    verbs: ["get", "list"]
-{{- end }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -189,10 +178,6 @@ spec:
           value: {{ .Values.pxbackup.orgName }}
         - name: PX_BACKUP_DEFAULT_DATASTORE
           value: mongodb
-        - name: SOFT_LICENSING_PERIOD
-          value: "30"
-        - name: AIRGAP_REPORTING_PERIOD
-          value: "90"
         {{- if .Values.caCertsSecretName }}
         - name: SSL_CERT_DIR
           value: /tmp/certs
@@ -214,7 +199,7 @@ spec:
           httpGet:
             path: /v1/health
             port: 10001
-          initialDelaySeconds: {{ .Values.pxbackup.livenessProbeInitialDelay }}
+          initialDelaySeconds: 600
           timeoutSeconds: 1
           periodSeconds: 60
         {{- if .Values.caCertsSecretName }}  
@@ -241,10 +226,6 @@ spec:
         {{- range $sec := .Values.images.pullSecrets }}
         - name: {{ $sec | quote }}
         {{- end }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-      {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if $isOpenshiftCluster}}
       {{- else }}
