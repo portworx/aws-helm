@@ -1,4 +1,44 @@
 {{/* Setting defaults if they are omitted. */}}
+{{- $isOpenshiftCluster := .Capabilities.APIVersions.Has "apps.openshift.io/v1" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pxcentral-lh-middleware
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: pxcentral-lh-middleware
+{{- include "px-central.labels" . | nindent 4 }}
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pxcentral-lh-middleware
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: pxcentral-lh-middleware
+{{- include "px-central.labels" . | nindent 4 }}
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pxcentral-lh-middleware
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: pxcentral-lh-middleware
+{{- include "px-central.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: pxcentral-lh-middleware
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: pxcentral-lh-middleware
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -105,6 +145,10 @@ spec:
           initialDelaySeconds: 15
           timeoutSeconds: 1
           periodSeconds: 60
+      {{- with .Values.tolerations }}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }} 
       {{- if .Values.caCertsSecretName }}
       volumes:
         - name: ssl-cert-dir
@@ -118,4 +162,10 @@ spec:
         - name: {{ $sec | quote }}
         {{- end }}
       {{- end }}
+      {{- if $isOpenshiftCluster}}
+      {{- else }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+      {{- end }}
       restartPolicy: Always
+      serviceAccountName: pxcentral-lh-middleware
