@@ -11,6 +11,9 @@ persistentStorage:
     storage: 2Gi
   ingester:
     storage: 2Gi
+  prometheus:
+    storage: 5Gi
+    retentionSize: 4600MB
   mysqlVolumeSize: "100Gi"
   mongodbVolumeSize: "64Gi"
   mongoCacheSize: 4
@@ -50,8 +53,20 @@ pxbackup:
   callHome: true
   mongoMigration: complete
   livenessProbeInitialDelay: 1800
+  prometheus:
+    replicas: 2
+    retention: 90d
+  alertmanager:
+    replicas: 2
+    retention: 2208h
   nfs:
     enabled: true
+  deployDedicatedMonitoringSystem: true
+  prometheusEndpoint: ""
+  alertmanagerEndpoint: ""
+  prometheusSecretName: ""
+  alertmanagerSecretName: ""
+  usePxBackupEmailAlertTemplate: true
 
 pxlicenseserver:
   enabled: false
@@ -136,27 +151,27 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.6.0
+    tag: 2.7.0
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.6.0
+    tag: 2.7.0
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.6.0
+    tag: 2.7.0
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.6.0
+    tag: 2.7.0
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.6.0
+    tag: 2.7.0
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
@@ -171,17 +186,17 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: keycloak-login-theme
-    tag: 2.2.0
+    tag: 2.7.0
   keycloakInitContainerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
     imageName: busybox
-    tag: 1.31
+    tag: 1.35.0
   mysqlImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
     imageName: mysql
-    tag: 5.7.41
+    tag: 5.7.44
 
   ## Images required for enabling px-backup
 
@@ -189,10 +204,32 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.6.0
+    tag: 2.7.0
   mongodbImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
     imageName: mongodb
-    tag: 5.0.20-debian-11-r13
+    tag: 5.0.24-debian-11-r0
 
+  ## Images required for enabling pxbackup-monitor
+
+  pxBackupPrometheusImage:
+    registry: docker.io
+    repo: portworx
+    imageName: prometheus
+    tag: v2.48.0
+  pxBackupAlertmanagerImage:
+    registry: docker.io
+    repo: portworx
+    imageName: alertmanager
+    tag: v0.26.0
+  pxBackupPrometheusOperatorImage:
+    registry: docker.io
+    repo: portworx
+    imageName: prometheus-operator
+    tag: v0.70.0
+  pxBackupPrometheusConfigReloaderImage:
+    registry: docker.io
+    repo: portworx
+    imageName: prometheus-config-reloader
+    tag: v0.70.0
