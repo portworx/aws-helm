@@ -25,7 +25,7 @@ csi: true                          # Enable CSI
 
 internalKVDB: true                  # internal KVDB
 
-customRegistryURL: 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx
+customRegistryURL: 
 registrySecret:
 
 serviceAccount:
@@ -35,8 +35,8 @@ repo:
   dr: "709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr"
 
 versions:
-  operator: "23.10.2"
-  enterprise: "3.1.0"
-  ociMon: "3.1.0"
-  autoPilot: "1.3.11"
-  stork: "23.11.0"
+  operator: "24.1.0"
+  enterprise: "3.1.2"
+  ociMon: "3.1.2"
+  autoPilot: "1.3.14"
+  stork: "24.2.2"
