@@ -1,5 +1,7 @@
 {{/* Setting defaults if they are omitted. */}}
 {{- $isOpenshiftCluster := .Capabilities.APIVersions.Has "apps.openshift.io/v1" -}}
+{{- $deployDedicatedMonitoringSystem := .Values.pxbackup.deployDedicatedMonitoringSystem }}
+{{- $azureProxyEnabled := .Values.proxy.azureProxyEnabled | default false }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -14,6 +16,11 @@ metadata:
 {{- include "px-central.labels" . | nindent 4 }}
 spec:
   template:
+    {{- if eq $azureProxyEnabled true }}
+    metadata:
+      annotations:
+        kubernetes.azure.com/no-http-proxy-vars: "true"
+    {{- end }}
     spec:
       affinity:
         nodeAffinity:
@@ -50,6 +57,14 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+          {{- include "proxy.noProxyEnv" . | nindent 10 }}
+      {{- if eq $deployDedicatedMonitoringSystem true }}
+          - name: DEDICATED_PROMETHEUS
+            value: "true"
+      {{- else }}
+          - name: DEDICATED_PROMETHEUS
+            value: "false"
+      {{- end }}
           - name: DEPLOYMENT_TYPE
             {{- if eq .Release.IsInstall true }}
             value: "install"
