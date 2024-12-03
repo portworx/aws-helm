@@ -55,12 +55,12 @@ rules:
       - extensions
     resources:
       - thirdpartyresources
-    verbs: ["*"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups:
       - apiextensions.k8s.io
     resources:
         - customresourcedefinitions
-    verbs: ["*"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups:
       - monitoring.coreos.com
     resources:
@@ -76,17 +76,17 @@ rules:
         - thanosrulers
         - alertmanagerconfigs
         - probes
-    verbs: ["*"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups:
       - apps
     resources:
       - statefulsets
-    verbs: ["*"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: [""]
     resources:
       - configmaps
       - secrets
-    verbs: ["*"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: [""]
     resources:
       - pods
@@ -133,7 +133,7 @@ spec:
     metadata:
       labels:
         k8s-app: prometheus-operator
-      {{- if eq $azureProxyEnabled true }}
+      {{- if and (eq $azureProxyEnabled true) (not (has "prometheus-operator" .Values.proxy.excludeAzureProxyList)) }}
       annotations:
         kubernetes.azure.com/no-http-proxy-vars: "true"
       {{- end }}
@@ -164,7 +164,9 @@ spec:
             name: http
         {{- if .Values.proxy.httpProxy.noProxy }}
         env:
+        {{- if or (empty .Values.proxy.includeNoProxyList) (has "prometheus-operator" .Values.proxy.includeNoProxyList) }}
         {{ include "proxy.noProxyEnv" . | nindent 8 }}
+        {{- end }}
         {{- end }}
         {{- if $isOpenshiftCluster }}
         {{- else }}
@@ -285,7 +287,7 @@ spec:
   additionalAlertManagerConfigs:
     key: am-configs.yaml
     name: pxc-backup-metrics
-  {{- if eq $azureProxyEnabled true }}
+  {{- if and (eq $azureProxyEnabled true) (not (has "px-backup-dashboard-prometheus" .Values.proxy.excludeAzureProxyList)) }}
   podMetadata:
     annotations:
       kubernetes.azure.com/no-http-proxy-vars: "true"
@@ -325,14 +327,16 @@ spec:
         secretKeyRef:
           name: pxc-backup-metrics
           key: metrics-token
+    {{- if or (empty .Values.proxy.includeNoProxyList) (has "px-backup-dashboard-prometheus" .Values.proxy.includeNoProxyList) }}
     {{ include "proxy.noProxyEnv" . | nindent 4 }}
+    {{- end }}
     image: {{ printf "%s/%s/%s:%s" .Values.images.pxBackupPrometheusImage.registry .Values.images.pxBackupPrometheusImage.repo .Values.images.pxBackupPrometheusImage.imageName .Values.images.pxBackupPrometheusImage.tag }}
     livenessProbe:
       exec:
         command:
         - sh
         - -c
-        - wget {{ if .Values.proxy.httpProxy.noProxy }}--no-proxy{{ end }} http://localhost:9090/-/healthy --header="Authorization:Basic $AUTH_SECRET"
+        - wget {{ if .Values.proxy.httpProxy.noProxy }}--proxy=off{{ end }} http://localhost:9090/-/healthy --header="Authorization:Basic $AUTH_SECRET"
           -qO-
     name: prometheus
     readinessProbe:
@@ -340,14 +344,14 @@ spec:
         command:
         - sh
         - -c
-        - wget {{ if .Values.proxy.httpProxy.noProxy }}--no-proxy{{ end }} http://localhost:9090/-/ready --header="Authorization:Basic $AUTH_SECRET"
+        - wget {{ if .Values.proxy.httpProxy.noProxy }}--proxy=off{{ end }} http://localhost:9090/-/ready --header="Authorization:Basic $AUTH_SECRET"
           -qO-
     startupProbe:
       exec:
         command:
         - sh
         - -c
-        - wget {{ if .Values.proxy.httpProxy.noProxy }}--no-proxy{{ end }} http://localhost:9090/-/ready --header="Authorization:Basic $AUTH_SECRET"
+        - wget {{ if .Values.proxy.httpProxy.noProxy }}--proxy=off{{ end }} http://localhost:9090/-/ready --header="Authorization:Basic $AUTH_SECRET"
           -qO-
     ports:
     - containerPort: 9090
@@ -372,7 +376,9 @@ spec:
         secretKeyRef:
           key: password
           name: pxc-backup-metrics
+    {{- if or (empty .Values.proxy.includeNoProxyList) (has "px-backup-dashboard-prometheus" .Values.proxy.includeNoProxyList) }}
     {{ include "proxy.noProxyEnv" . | nindent 4 }}
+    {{- end }}
     ports:
     - containerPort: 8080
       name: reloader-web
@@ -512,24 +518,25 @@ spec:
     rules:
     - alert: ClusterAlert
       annotations:
-        description: {{`The Cluster "{{ $labels.name
-          }}" has failed.`}}
-        summary: Cluster addition failed
-      expr: pxbackup_cluster_status == 5
+        description: {{`The Cluster "{{ $labels.name }}" {{- if eq $value 5.00 }} has failed.  {{- else if eq $value 2.00 }} has turned offline.{{- else }}unknown state.{{- end }} `}}
+        summary: {{`Cluster {{- if eq $value 5.00 }} addition failed {{- else if eq $value 2.00}} turned offline {{- else }}unknown state {{- end }}`}}
+        value: "{{`{{ $value }}`}}"
+      expr: pxbackup_cluster_status == 5 or pxbackup_cluster_status == 2
       for: 1m
       labels:
         severity: critical
 
     - alert: BackupAlert
       annotations:
-        description: {{`The Backup "{{ $labels.name 
-          }}" {{- if eq .Labels.schedule_name "" }} 
-          {{ else }} part of backup schedule "{{ $labels.schedule_name}}" 
-          {{ end }} taken for cluster 
-          "{{ $labels.cluster}}" on namespace 
-          "{{ $labels.backup_namespace}}" has failed.`}}
-        summary: Backup failed
-      expr: pxbackup_backup_status == 4
+        description: |-
+          {{ `The Backup "{{ $labels.name }}"
+          {{- if eq $labels.schedule_name "" }}
+          {{ else }} part of backup schedule "{{ $labels.schedule_name }}"
+          {{ end }} taken for cluster "{{ $labels.cluster }}" on namespace "{{ $labels.backup_namespace }}"
+          {{- if eq $value 4.00 }} has failed. {{- else }} is missing from backup location. {{- end }} `}}
+        summary: "{{` {{- if eq $value 4.00 -}} Backup failed {{- else -}} Cloud file missing {{- end }} `}}"
+        value: "{{`{{ $value }}`}}"
+      expr: pxbackup_backup_status == 4 or pxbackup_backup_status == 10
       for: 1m
       labels:
         severity: critical
