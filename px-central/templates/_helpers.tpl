@@ -52,6 +52,18 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+HTTP proxy enabled env.
+*/}}
+{{- define "proxy.noProxyEnv" -}}
+{{- if .Values.proxy.httpProxy.noProxy }}
+- name: NO_PROXY
+  value: {{ .Values.proxy.httpProxy.noProxy }}
+- name: no_proxy
+  value: {{ .Values.proxy.httpProxy.noProxy }}
+{{- end }}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "px-central.serviceAccountName" -}}
@@ -61,3 +73,16 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Renders a value that contains template.
+Usage:
+{{ include "pxcentral.render" ( dict "value" .Values.path.to.the.Value "context" $) }}
+*/}}
+{{- define "pxcentral.render" -}}
+    {{- if typeIs "string" .value }}
+        {{- tpl .value .context }}
+    {{- else }}
+        {{- tpl (.value | toYaml) .context }}
+    {{- end }}
+{{- end -}}
