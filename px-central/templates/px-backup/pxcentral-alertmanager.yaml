@@ -23,7 +23,7 @@ spec:
             - "false"
           {{- end }}
   configSecret: px-backup-alertmanager-custom-config
-  {{- if eq $azureProxyEnabled true }}
+  {{- if and (eq $azureProxyEnabled true) (not (has "px-backup-alertmanager" .Values.proxy.excludeAzureProxyList)) }}
   podMetadata:
     annotations:
       kubernetes.azure.com/no-http-proxy-vars: "true"
@@ -58,7 +58,9 @@ spec:
             secretKeyRef:
               name: pxc-backup-metrics
               key: metrics-token
+        {{- if or (empty .Values.proxy.includeNoProxyList) (has "px-backup-alertmanager" .Values.proxy.includeNoProxyList) }}
         {{ include "proxy.noProxyEnv" . | nindent 8 }}
+        {{- end }}
         - name: POD_IP
           valueFrom:
             fieldRef:
@@ -87,7 +89,9 @@ spec:
           secretKeyRef:
             key: password
             name: pxc-backup-metrics
+      {{- if or (empty .Values.proxy.includeNoProxyList) (has "px-backup-alertmanager" .Values.proxy.includeNoProxyList) }}
       {{ include "proxy.noProxyEnv" . | nindent 6 }}
+      {{- end }}
       name: config-reloader
       ports:
       - containerPort: 8080
@@ -130,6 +134,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: px-backup-alertmanager-custom-config
+  namespace: {{ .Release.Namespace }}
 type: Opaque
 stringData:
   alertmanager.yaml: |
@@ -190,7 +195,11 @@ stringData:
             <div
                 class="pb-16"
                 style="margin: 22px 0px;width: 400px; color: #bc1b06; font-size: 18px; font-weight: 500">
-                Critical Alert: Cluster Disconnected
+                Critical Alert: 
+                {{ if eq .Annotations.value "5" }}Cluster Disconnected
+                {{ else if eq .Annotations.value "2" }}Cluster Offline
+                {{ else }}unknown (value: {{ .Annotations.value }})
+                {{ end }}
             </div>
             <div
                 class="pb-16"
@@ -228,8 +237,10 @@ stringData:
                 style="margin: 22px 0px;width: 400px; color: #bc1b06; font-size: 18px; font-weight: 500">
                 Critical Alert: 
                 {{ if eq .Labels.alertname "PartialBackupAlert" }}Backup was only partially completed
-                {{ else if eq .Labels.alertname "BackupAlert" }}Backup Failed
-                {{else}}unknown{{ end }}
+                {{ else if and (eq .Labels.alertname "BackupAlert")  (eq .Annotations.value "4") }}Backup Failed
+                {{ else if and (eq .Labels.alertname "BackupAlert") (eq .Annotations.value "10") }}Backup Missing
+                {{ else }}Unknown (value: {{ .Annotations.value }})
+                {{ end }}
             </div>
             <div
                 class="pb-16"
