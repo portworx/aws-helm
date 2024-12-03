@@ -22,6 +22,9 @@ metadata:
     app.kubernetes.io/component: px-backup
 {{- include "px-central.labels" . | nindent 4 }}
 rules:
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list"]
   - apiGroups: ["apiextensions.k8s.io"]
     resources: ["customresourcedefinitions"]
     verbs: ["create", "update", "get", "patch", "list", "watch"]
@@ -183,7 +186,7 @@ spec:
     metadata:
       labels:
         app: px-backup
-      {{- if eq $azureProxyEnabled true }}
+      {{- if and (eq $azureProxyEnabled true) (not (has "px-backup" .Values.proxy.excludeAzureProxyList)) }}
       annotations:
         kubernetes.azure.com/no-http-proxy-vars: "true"
       {{- end }}
@@ -210,6 +213,10 @@ spec:
               fieldPath: metadata.namespace
         - name: PX_BACKUP_DEFAULT_ORG
           value: {{ .Values.pxbackup.orgName }}
+        - name: BACKUP_DELETE_WORKER
+          value: "{{ .Values.pxbackup.backupDeleteWorker }}"
+        - name: VOL_DELETE_WORKER
+          value: "{{ .Values.pxbackup.volDeleteWorker }}"
         - name: ENABLE_MONITOR_BL_HEALTH
           value: "{{ .Values.pxbackup.enableMonitorBLHealth }}"
         - name: MONITOR_BL_HEALTH_FREQUENCY
@@ -222,7 +229,9 @@ spec:
           value: "36160"
         - name: AIRGAP_REPORTING_PERIOD
           value: "90"
+        {{- if or (empty .Values.proxy.includeNoProxyList) (has "px-backup" .Values.proxy.includeNoProxyList) }}
         {{- include "proxy.noProxyEnv" . | nindent 8 }}
+        {{- end }}
         {{- if .Values.caCertsSecretName }}
         - name: SSL_CERT_DIR
           value: /tmp/certs

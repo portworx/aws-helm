@@ -1,5 +1,32 @@
 {{- $isOpenshiftCluster := .Capabilities.APIVersions.Has "apps.openshift.io/v1" -}}
 {{- $azureProxyEnabled := .Values.proxy.azureProxyEnabled | default false }}
+
+{{- if .Release.IsUpgrade }}
+  {{- $sts := lookup "apps/v1" "StatefulSet" .Release.Namespace "pxc-backup-mongodb" -}}
+  {{- if $sts }}
+
+    # Expected image from helm chart values
+    {{- $expectedImage := printf "%s/%s/%s:%s" .Values.images.mongodbImage.registry .Values.images.mongodbImage.repo .Values.images.mongodbImage.imageName .Values.images.mongodbImage.tag -}}
+
+    {{- range $container := $sts.spec.template.spec.containers }}
+      {{- if ne $container.image $expectedImage }}
+        # Images do not match, check for ready replicas
+        {{- $readyReplicas := $sts.status.readyReplicas | default 0 -}}
+
+        {{- if lt $readyReplicas 3 }}
+          {{ fail (printf "ERROR MongoDB ready replicas expected = 3, received = %d. Please refer to the documentation to bring up all 3 pods." $readyReplicas) }}
+        {{- else }}
+          # Image mismatch, but ready replicas are sufficient
+        {{- end }}
+      {{- else }}
+        # Images match
+      {{- end }}
+    {{- end }}
+  {{- else }}
+    # StatefulSet not found
+  {{- end }}
+{{- end }}
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -113,7 +140,7 @@ metadata:
     meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 spec:
   template:  
-    {{- if eq $azureProxyEnabled true }}
+    {{- if and (eq $azureProxyEnabled true) (not (has "pre-upgrade-check" .Values.proxy.excludeAzureProxyList)) }}
     metadata:
       annotations:
         kubernetes.azure.com/no-http-proxy-vars: "true"
@@ -184,7 +211,9 @@ spec:
                     "mongodb7": "{{ .Values.images.mongodbImageMap.tags.mongodb7 }}"
                   }
                 }
-            {{- include "proxy.noProxyEnv" . | nindent 10 }}
+            {{- if or (empty .Values.proxy.includeNoProxyList) (has "pre-upgrade-check" .Values.proxy.includeNoProxyList) }}
+            {{- include "proxy.noProxyEnv" . | nindent 12 }}
+            {{- end }}
           volumeMounts:
             - name: data-volume
               mountPath: /mnt/data
