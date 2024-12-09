@@ -47,6 +47,51 @@ oidc:
 
 proxy:
   azureProxyEnabled: false
+  ## excludeAzureProxyList: List of services to exclude from Azure proxy configuration (annotations)
+
+
+  # excludeAzureProxyList:
+  # - px-backup-alertmanager
+  # - px-backup
+  # - pxc-backup-mongodb
+  # - prometheus-operator
+  # - px-backup-dashboard-prometheus
+  # - pre-upgrade-check
+  # - pxcentral-apiserver
+  # - pxcentral-post-install-hook
+  # - pxcentral-keycloak-postgresql
+  # - pxcentral-keycloak
+  # - pxcentral-lh-middleware
+  # - pxcentral-backend
+  # - pxcentral-frontend
+  # - pxcentral-mysql
+
+  # Example for using set command
+  # --set "proxy.excludeAzureProxyList[0]=px-backup","proxy.excludeAzureProxyList[1]=pxcentral-mysql"
+  excludeAzureProxyList: []
+
+  ## includeNoProxyList: List of services to include in the noProxy configuration.
+  # when this list is empty, noProxy is set to all services
+
+  # includeNoProxyList: 
+  # - px-backup-alertmanager
+  # - px-backup
+  # - pxc-backup-mongodb
+  # - prometheus-operator
+  # - px-backup-dashboard-prometheus
+  # - pre-upgrade-check
+  # - pxcentral-apiserver
+  # - pxcentral-post-install-hook
+  # - pxcentral-keycloak-postgresql
+  # - pxcentral-keycloak
+  # - pxcentral-lh-middleware
+  # - pxcentral-backend
+  # - pxcentral-frontend
+  # - pxcentral-mysql
+
+  # Example for using set command
+  # --set "proxy.includeNoProxyList[0]=px-backup"
+  includeNoProxyList: []
   httpProxy:
     noProxy: ""
 
@@ -75,6 +120,8 @@ pxbackup:
   usePxBackupEmailAlertTemplate: true
   monitorBLHealthFrequency: 210m
   enableMonitorBLHealth: false
+  backupDeleteWorker: 5
+  volDeleteWorker: 5
 
 pxlicenseserver:
   enabled: false
@@ -159,27 +206,27 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.7.3
+    tag: 2.8.0
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.7.3
+    tag: 2.8.0
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.7.3
+    tag: 2.8.0
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.7.3
+    tag: 2.8.0
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.7.3
+    tag: 2.8.0
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
@@ -189,12 +236,12 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/jboss
     imageName: keycloak
-    tag: 21.1.2
+    tag: 25.0.2
   keycloakLoginThemeImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: keycloak-login-theme
-    tag: 2.7.0
+    tag: 2.8.0
   keycloakInitContainerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
@@ -209,7 +256,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-pre-upgrade
-    tag: 2.7.3
+    tag: 2.8.0
   mysqlInitImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
@@ -221,7 +268,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.7.3
+    tag: 2.8.0
   mongodbImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
