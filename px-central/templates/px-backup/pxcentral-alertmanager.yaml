@@ -1,3 +1,5 @@
+{{- $pxBackupEnabled := .Values.pxbackup.enabled | default false }}
+{{- if eq $pxBackupEnabled true }}
 {{- $isOpenshiftCluster := .Capabilities.APIVersions.Has "apps.openshift.io/v1" -}}
 {{- $deployDedicatedMonitoringSystem := .Values.pxbackup.deployDedicatedMonitoringSystem }}
 {{- $azureProxyEnabled := .Values.proxy.azureProxyEnabled | default false }}
@@ -27,6 +29,10 @@ spec:
   podMetadata:
     annotations:
       kubernetes.azure.com/no-http-proxy-vars: "true"
+  {{- else if has "px-backup-alertmanager" .Values.proxy.excludeAzureProxyList }}
+  podMetadata:
+    annotations:
+      kubernetes.azure.com/no-http-proxy-vars: "false"
   {{- end }}
   alertmanagerConfigSelector:
     matchLabels:
@@ -370,3 +376,4 @@ stringData:
           </div>
       </body>
     </html>`}}
+{{- end -}}
