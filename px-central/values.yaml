@@ -20,6 +20,7 @@ persistentStorage:
   keycloakThemeVolumeSize: "5Gi"
   keycloakBackendVolumeSize: "10Gi"
   preUpgradeHookVolumeSize: "65Gi"
+  preInstallHookVolumeSize: "2Gi"
 
 storkRequired: false
 nodeAffinityLabel: ""
@@ -98,6 +99,10 @@ proxy:
 postInstallJob:
   sslEnabled: true
 
+isUpgrade: false
+isOpenshift: false
+isArgoCD: false
+
 pxbackup:
   enabled: false
   orgName: default
@@ -122,6 +127,8 @@ pxbackup:
   enableMonitorBLHealth: false
   backupDeleteWorker: 5
   volDeleteWorker: 5
+  version: 2.8.3
+  skipValidations: true
 
 pxlicenseserver:
   enabled: false
@@ -198,82 +205,96 @@ securityContext:
 tolerations: []
 
 images:
-  pullSecrets:
-    - docregistry-secret
+  pullSecrets: []
   pullPolicy: Always
+  insecureRegistry: false
 
   pxcentralApiServerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.8.1
+    tag: 2.8.3
+    module: pxCentral
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.8.1
+    tag: 2.8.3
+    module: pxCentral
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.8.1
+    tag: 2.8.3
+    module: pxCentral
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.8.1
+    tag: 2.8.3
+    module: pxCentral
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.8.1
+    tag: 2.8.3
+    module: pxCentral
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
     imageName: postgresql
-    tag: 11.19.0-debian-11-r1
+    tag: 16.6.0-debian-12-r2
+    module: pxCentral
   keycloakFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/jboss
     imageName: keycloak
     tag: 25.0.2
+    module: pxCentral
   keycloakLoginThemeImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: keycloak-login-theme
     tag: 2.8.0
+    module: pxCentral
   keycloakInitContainerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
     imageName: busybox
     tag: 1.35.0
+    module: pxCentral
   mysqlImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
     imageName: mysql
-    tag: 8.0.37
-  preUpgradeHookImage:
+    tag: 8.0.40
+    module: pxCentral
+  preSetupHookImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
-    imageName: pxcentral-onprem-pre-upgrade
-    tag: 2.8.1
+    imageName: pxcentral-onprem-hook
+    tag: 2.8.3
+    module: pxCentral
   mysqlInitImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
     imageName: busybox
     tag: 1.35.0
+    module: pxCentral
 
   ## Images required for enabling px-backup
   pxBackupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.8.1
+    tag: 2.8.3
+    module: pxBackup
   mongodbImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
     imageName: mongodb
-    tag: 7.0.14-debian-12-r0
+    tag: 7.0.15-debian-12-r2
+    module: pxBackup
 
   
 
@@ -282,29 +303,31 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: prometheus
-    tag: v2.53.0
+    tag: v3.1.0
+    module: pxBackup
   pxBackupAlertmanagerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: alertmanager
-    tag: v0.26.0
+    tag: v0.28.0
+    module: pxBackup
   pxBackupPrometheusOperatorImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: prometheus-operator
-    tag: v0.75.0
+    tag: v0.79.2
+    module: pxBackup
   pxBackupPrometheusConfigReloaderImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: prometheus-config-reloader
-    tag: v0.75.0
+    tag: v0.79.2
+    module: pxBackup
 
   ## Images required for intermediate Mongo upgrades
   mongodbImageMap:
-    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
-    repo: portworx/bitnami
-    imageName: mongodb
-    tags: 
+    tags:
       mongodb5: 5.0.24-debian-11-r20
       mongodb6: 6.0.13-debian-11-r21
-      mongodb7: 7.0.14-debian-12-r0
+      mongodb7: 7.0.15-debian-12-r2
+    module: pxBackup
