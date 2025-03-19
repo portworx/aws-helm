@@ -81,6 +81,6 @@ spec:
     - name: default
       type: prometheus
       params:
-        url: http://prometheus:9090
+        url: http://px-prometheus:9090
   csi:
     enabled: {{ .Values.csi  | default "true" }}
