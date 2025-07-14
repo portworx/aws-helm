@@ -1,84 +1,40 @@
-PXE_VERSION=3.3.1
+# AWS Marketplace ECR repos
+MARKETPLACE_PXE_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx
+MARKETPLACE_PXE_DR_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr
 
-MARKETPLACE_PXE_REPO="709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx"
-MARKETPLACE_PXE_DR_REPO="709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr"
+# Version configuration
+PXE_VERSION := 3.3.1
+OPERATOR_VERSION := 25.2.2
+AUTOPILOT_VERSION := 1.3.17
+STORK_VERSION := 25.3.0
 
-.PHONY: pull-images
+COMPONENTS := px-enterprise oci-monitor operator autopilot stork
 
-pull-images:
-	@curl -fsSL https://install.portworx.com/$(PXE_VERSION)/version -o ./version
-	@curl -fsSL https://install.portworx.com/$(PXE_VERSION)/air-gapped -o ./air-gapped
+# Images
+px-enterprise_image := docker.io/portworx/px-enterprise:$(PXE_VERSION)
+oci-monitor_image := docker.io/portworx/oci-monitor:$(PXE_VERSION)
+operator_image := docker.io/portworx/px-operator:$(OPERATOR_VERSION)
+autopilot_image := docker.io/portworx/autopilot:$(AUTOPILOT_VERSION)
+stork_image := docker.io/openstorage/stork:$(STORK_VERSION)
 
-	docker pull $$(yq -r .components.autopilot ./version)
-	docker pull $$(yq -r .components.stork ./version)
+# Helper functions to get mapping values
+src_image = $(if $($(1)_image),$($(1)_image),$(error Image not defined for '$(1)'))
+dest_image = $(subst docker.io/portworx,$(1),$(subst docker.io/openstorage,$(1),$(call src_image,$(2))))
 
-	docker pull $$(cat ./air-gapped | grep 'oci-monitor' | sed 's/IMAGES="$$IMAGES //' | tr -d '"')
-	docker pull $$(cat ./air-gapped | grep 'px-enterprise' | sed 's/IMAGES="$$IMAGES //' | tr -d '"')
-	docker pull $$(cat ./air-gapped | grep 'px-operator' | sed 's/IMAGES="$$IMAGES //' | tr -d '"')
+.PHONY: pull publish
 
-	autopilot_version=$$(yq -r .components.autopilot ./version | cut -d ':' -f 2); \
-		docker tag $$(yq -r .components.autopilot ./version) $(MARKETPLACE_PXE_REPO)/autopilot:$$autopilot_version; \
-		docker tag $$(yq -r .components.autopilot ./version) $(MARKETPLACE_PXE_DR_REPO)/autopilot:$$autopilot_version
+pull: $(addprefix pull-,$(COMPONENTS))
 
-	stork_version=$$(yq -r .components.stork ./version | cut -d ':' -f 2); \
-		docker tag $$(yq -r .components.stork ./version) $(MARKETPLACE_PXE_REPO)/stork:$$stork_version; \
-		docker tag $$(yq -r .components.stork ./version) $(MARKETPLACE_PXE_DR_REPO)/stork:$$stork_version
+publish: $(addprefix publish-,$(COMPONENTS))
 
-	oci_monitor=$$(cat ./air-gapped | grep 'oci-monitor' | sed 's/IMAGES="$$IMAGES //' | tr -d '"'); \
-		oci_monitor_version=$$(echo $$oci_monitor | cut -d ':' -f 2); \
-		docker tag $$oci_monitor $(MARKETPLACE_PXE_REPO)/oci-monitor:$$oci_monitor_version; \
-		docker tag $$oci_monitor $(MARKETPLACE_PXE_DR_REPO)/oci-monitor:$$oci_monitor_version
+pull-%:
+	@echo "Pulling image $*"
+	docker pull $(call src_image,$*)
+	docker tag $(call src_image,$*) $(call dest_image,$(MARKETPLACE_PXE_REPO),$*)
+	docker tag $(call src_image,$*) $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)
 
-	px_enterprise=$$(cat ./air-gapped | grep 'px-enterprise' | sed 's/IMAGES="$$IMAGES //' | tr -d '"'); \
-		px_enterprise_version=$$(echo $$px_enterprise | cut -d ':' -f 2); \
-		docker tag $$px_enterprise $(MARKETPLACE_PXE_REPO)/px-enterprise:$$px_enterprise_version; \
-		docker tag $$px_enterprise $(MARKETPLACE_PXE_DR_REPO)/px-enterprise:$$px_enterprise_version
-
-	px_operator=$$(cat ./air-gapped | grep 'px-operator' | sed 's/IMAGES="$$IMAGES //' | tr -d '"'); \
-		px_operator_version=$$(echo $$px_operator | cut -d ':' -f 2); \
-		docker tag $$px_operator $(MARKETPLACE_PXE_REPO)/px-operator:$$px_operator_version; \
-		docker tag $$px_operator $(MARKETPLACE_PXE_DR_REPO)/px-operator:$$px_operator_version
-
-	@rm -f ./air-gapped ./version
-
-push-images:
-	@curl -fsSL https://install.portworx.com/$(PXE_VERSION)/version -o ./version
-	@curl -fsSL https://install.portworx.com/$(PXE_VERSION)/air-gapped -o ./air-gapped
-
-	autopilot_version=$$(yq -r .components.autopilot ./version | cut -d ':' -f 2); \
-		docker push $(MARKETPLACE_PXE_REPO)/autopilot:$$autopilot_version
-
-	stork_version=$$(yq -r .components.stork ./version | cut -d ':' -f 2); \
-		docker push $(MARKETPLACE_PXE_REPO)/stork:$$stork_version
-
-	oci_monitor_version=$$(cat ./air-gapped | grep 'oci-monitor' | sed 's/IMAGES="$$IMAGES //' | tr -d '"' | cut -d ':' -f 2); \
-		docker push $(MARKETPLACE_PXE_REPO)/oci-monitor:$$oci_monitor_version
-
-	px_enterprise_version=$$(cat ./air-gapped | grep 'px-enterprise' | sed 's/IMAGES="$$IMAGES //' | tr -d '"' | cut -d ':' -f 2); \
-		docker push $(MARKETPLACE_PXE_REPO)/px-enterprise:$$px_enterprise_version
-
-	px_operator_version=$$(cat ./air-gapped | grep 'px-operator' | sed 's/IMAGES="$$IMAGES //' | tr -d '"' | cut -d ':' -f 2); \
-		docker push $(MARKETPLACE_PXE_REPO)/px-operator:$$px_operator_version
-
-	@rm -f ./air-gapped ./version
-
-push-images-dr:
-	@curl -fsSL https://install.portworx.com/$(PXE_VERSION)/version -o ./version
-	@curl -fsSL https://install.portworx.com/$(PXE_VERSION)/air-gapped -o ./air-gapped
-
-	autopilot_version=$$(yq -r .components.autopilot ./version | cut -d ':' -f 2); \
-		docker push $(MARKETPLACE_PXE_DR_REPO)/autopilot:$$autopilot_version
-
-	stork_version=$$(yq -r .components.stork ./version | cut -d ':' -f 2); \
-		docker push $(MARKETPLACE_PXE_DR_REPO)/stork:$$stork_version
-
-	oci_monitor_version=$$(cat ./air-gapped | grep 'oci-monitor' | sed 's/IMAGES="$$IMAGES //' | tr -d '"' | cut -d ':' -f 2); \
-		docker push $(MARKETPLACE_PXE_DR_REPO)/oci-monitor:$$oci_monitor_version
-
-	px_enterprise_version=$$(cat ./air-gapped | grep 'px-enterprise' | sed 's/IMAGES="$$IMAGES //' | tr -d '"' | cut -d ':' -f 2); \
-		docker push $(MARKETPLACE_PXE_DR_REPO)/px-enterprise:$$px_enterprise_version
-
-	px_operator_version=$$(cat ./air-gapped | grep 'px-operator' | sed 's/IMAGES="$$IMAGES //' | tr -d '"' | cut -d ':' -f 2); \
-		docker push $(MARKETPLACE_PXE_DR_REPO)/px-operator:$$px_operator_version
-
-	@rm -f ./air-gapped ./version
+publish-%:
+	@echo "Pushing image $(call dest_image,$(MARKETPLACE_PXE_REPO),$*)"
+	docker push $(call dest_image,$(MARKETPLACE_PXE_REPO),$*)
+	@echo "Pushing image $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)"
+	docker push $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)
