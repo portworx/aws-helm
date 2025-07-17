@@ -8,6 +8,8 @@ OPERATOR_VERSION := 25.2.2
 AUTOPILOT_VERSION := 1.3.17
 STORK_VERSION := 25.3.0
 
+BRANCH ?= master
+
 COMPONENTS := px-enterprise oci-monitor operator autopilot stork
 
 # Images
@@ -38,3 +40,7 @@ publish-%:
 	docker push $(call dest_image,$(MARKETPLACE_PXE_REPO),$*)
 	@echo "Pushing image $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)"
 	docker push $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)
+
+package-helm:
+	@echo "Packaging helm chart for portworx enterprise"
+	cd stable && helm package ../portworx && helm repo index . --url https://raw.githubusercontent.com/portworx/aws-helm/$(BRANCH)/stable
