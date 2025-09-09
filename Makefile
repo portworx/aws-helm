@@ -3,13 +3,12 @@ MARKETPLACE_PXE_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx
 MARKETPLACE_PXE_DR_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr
 
 # Version configuration
-PXE_VERSION := 3.3.1.3
-OPERATOR_VERSION := 25.2.2
+PXE_VERSION := 3.4.0
+OPERATOR_VERSION := 25.3.1
 AUTOPILOT_VERSION := 1.3.17
-STORK_VERSION := 25.3.2
+STORK_VERSION := 25.4.0
 
-BRANCH ?= master
-
+GIT_BRANCH ?= $(shell git branch --show-current)
 COMPONENTS := px-enterprise oci-monitor operator autopilot stork
 
 # Images
@@ -45,12 +44,23 @@ publish-%:
 	@echo "Pushing image $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)"
 	docker push $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)
 
-package-helm:
+lint:
+	helm lint portworx
+
+package-helm: lint
 	@echo "Packaging helm chart for portworx enterprise"
-	cd stable && helm package ../portworx && helm repo index . --url https://raw.githubusercontent.com/portworx/aws-helm/$(BRANCH)/stable
+	cd stable && helm package ../portworx && helm repo index . --url https://raw.githubusercontent.com/portworx/aws-helm/$(GIT_BRANCH)/stable
 
 list-%:
 	@echo "$(call dest_image,$(MARKETPLACE_PXE_REPO),$*)"
 
 listdr-%:
 	@echo "$(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)"
+
+update-versions:
+	sed -Ei '/versions:\s*/{n; s/^\s+operator:\s+\S+(.*)$$/  operator: "$(OPERATOR_VERSION)"\1/}' ./portworx/values.yaml
+	sed -Ei '/operator:\s*\"$(OPERATOR_VERSION)\"/{n; s/^\s+enterprise:\s+\S+(.*)$$/  enterprise: "$(PXE_VERSION)"\1/}' ./portworx/values.yaml
+	sed -Ei '/enterprise:\s*\"$(PXE_VERSION)\"/{n; s/^\s+ociMon:\s+\S+(.*)$$/  ociMon: "$(PXE_VERSION)"\1/}' ./portworx/values.yaml
+	sed -Ei '/ociMon:\s*\"$(PXE_VERSION)\"/{n; s/^\s+autoPilot:\s+\S+(.*)$$/  autoPilot: "$(AUTOPILOT_VERSION)"\1/}' ./portworx/values.yaml
+	sed -Ei '/autoPilot:\s*\"$(AUTOPILOT_VERSION)\"/{n; s/^\s+stork:\s+\S+(.*)$$/  stork: "$(STORK_VERSION)"\1/}' ./portworx/values.yaml
+	sed -i 's/^appVersion:\s*.*$$/appVersion: "$(PXE_VERSION)"/' ./portworx/Chart.yaml
