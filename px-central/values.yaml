@@ -131,7 +131,7 @@ pxbackup:
   enableMonitorBLHealth: false
   backupDeleteWorker: 5
   volDeleteWorker: 5
-  version: 2.9.0
+  version: 2.9.1
   skipValidations: true
 
 pxlicenseserver:
@@ -217,31 +217,31 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.9.0
+    tag: 2.9.1
     module: pxCentral
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.9.0
+    tag: 2.9.1
     module: pxCentral
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.9.0
+    tag: 2.9.1
     module: pxCentral
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.9.0
+    tag: 2.9.1
     module: pxCentral
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.9.0
+    tag: 2.9.1
     module: pxCentral
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
@@ -259,7 +259,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: keycloak-login-theme
-    tag: 2.8.0
+    tag: 2.9.1
     module: pxCentral
   keycloakInitContainerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
@@ -277,7 +277,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-hook
-    tag: 2.9.0
+    tag: 2.9.1
     module: pxCentral
   mysqlInitImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
@@ -291,7 +291,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.9.0
+    tag: 2.9.1
     module: pxBackup
   mongodbImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
