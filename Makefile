@@ -3,8 +3,8 @@ MARKETPLACE_PXE_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx
 MARKETPLACE_PXE_DR_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr
 
 # Version configuration
-PXE_VERSION := 3.4.0.1
-OPERATOR_VERSION := 25.3.1
+PXE_VERSION := 3.4.1
+OPERATOR_VERSION := 25.4.0
 AUTOPILOT_VERSION := 1.3.17
 STORK_VERSION := 25.4.1
 
