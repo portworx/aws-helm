@@ -5,7 +5,7 @@
 {{- $usefileSystemDrive := .Values.storage.usefileSystemDrive | default false }}
 {{- $drives := .Values.storage.drives | default "none" }}
 {{- $usedrivesAndPartitions := .Values.storage.usedrivesAndPartitions | default false }}
-{{- $maxStorageNodesPerZone := int64 .Values.storage.maxStorageNodesPerZone | int64 }}
+{{- $initialStorageNodes := int64 .Values.storage.initialStorageNodes | int64 }}
 {{- $dataInterface := .Values.dataInterface | default "none" }}
 {{- $managementInterface := .Values.managementInterface | default "none" }}
 {{- $registrySecret := .Values.registrySecret | default "none" }}
@@ -68,8 +68,8 @@ spec:
     {{- end }}
     journalDeviceSpec: auto
     systemMetadataDeviceSpec: type=gp3,size=64
-    {{- if ne $maxStorageNodesPerZone 0 }}
-    maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
+    {{- if ne $initialStorageNodes 0 }}
+    initialStorageNodes: {{ $initialStorageNodes }}
     {{- end }}
   {{- end }}
   {{- if ne .Values.secretType "k8s" }}
