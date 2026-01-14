@@ -26,17 +26,14 @@ storkRequired: false
 nodeAffinityLabel: ""
 podAntiAffinity: false
 
-pxcentralDBPassword: Password1
 caCertsSecretName: ""
 
 oidc:
   centralOIDC:
     enabled: true
     defaultUsername: admin
-    defaultPassword: admin
     defaultEmail: admin@portworx.com
     keyCloakBackendUserName: keycloak
-    keyCloakBackendPassword: keycloak
     clientId: "pxcentral"
     updateAdminProfile: true
 
@@ -102,6 +99,13 @@ proxy:
 postInstallJob:
   sslEnabled: true
 
+istio:
+  enabled: false
+  hostName: ""
+
+linkerd:
+  enabled: false
+
 isUpgrade: false
 isOpenshift: false
 isArgoCD: false
@@ -131,8 +135,10 @@ pxbackup:
   enableMonitorBLHealth: false
   backupDeleteWorker: 5
   volDeleteWorker: 5
-  version: 2.9.0
+  version: 2.10.0
   skipValidations: true
+  usePlatformRbac: false
+  encryptMongoDB: false
 
 pxlicenseserver:
   enabled: false
@@ -209,6 +215,8 @@ securityContext:
 tolerations: []
 
 images:
+  registry: ""
+  repo: ""
   pullSecrets: []
   pullPolicy: Always
   insecureRegistry: false
@@ -217,31 +225,31 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.9.0
+    tag: 2.10.0
     module: pxCentral
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.9.0
+    tag: 2.10.0
     module: pxCentral
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.9.0
+    tag: 2.10.0
     module: pxCentral
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.9.0
+    tag: 2.10.0
     module: pxCentral
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.9.0
+    tag: 2.10.0
     module: pxCentral
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
@@ -253,7 +261,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/jboss
     imageName: keycloak
-    tag: 26.2.4
+    tag: 26.2.4_v2
     module: pxCentral
   keycloakLoginThemeImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
@@ -271,13 +279,13 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
     imageName: mysql
-    tag: 8.0.40
+    tag: 8.0.43
     module: pxCentral
   preSetupHookImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-hook
-    tag: 2.9.0
+    tag: 2.10.0
     module: pxCentral
   mysqlInitImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
@@ -291,13 +299,13 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.9.0
+    tag: 2.10.0
     module: pxBackup
   mongodbImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
     imageName: mongodb
-    tag: 8.0.9-debian-12-r1
+    tag: 8.0.12-debian-12-r0
     module: pxBackup
 
   
@@ -307,7 +315,7 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: prometheus
-    tag: v3.3.1
+    tag: v3.6.0
     module: pxBackup
   pxBackupAlertmanagerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
@@ -319,13 +327,13 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: prometheus-operator
-    tag: v0.82.1
+    tag: v0.85.0
     module: pxBackup
   pxBackupPrometheusConfigReloaderImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: prometheus-config-reloader
-    tag: v0.82.1
+    tag: v0.85.0
     module: pxBackup
 
   ## Images required for intermediate Mongo upgrades
@@ -334,5 +342,5 @@ images:
       mongodb5: 5.0.24-debian-11-r20
       mongodb6: 6.0.13-debian-11-r21
       mongodb7: 7.0.15-debian-12-r2
-      mongodb8: 8.0.9-debian-12-r1
+      mongodb8: 8.0.12-debian-12-r0
     module: pxBackup
