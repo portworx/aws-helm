@@ -186,6 +186,7 @@ spec:
     metadata:
       labels:
         app: px-backup
+{{- include "px-central.partOfLabel" . | nindent 8 }}
       {{- if and (eq $azureProxyEnabled true) (not (has "px-backup" .Values.proxy.excludeAzureProxyList)) }}
       annotations:
         kubernetes.azure.com/no-http-proxy-vars: "true"
@@ -217,6 +218,8 @@ spec:
           value: "{{ .Values.pxbackup.backupDeleteWorker }}"
         - name: VOL_DELETE_WORKER
           value: "{{ .Values.pxbackup.volDeleteWorker }}"
+        - name: BACKUP_INFO_METRICS_BACKFILL_HOURS
+          value: "{{ .Values.pxbackup.backupInfoMetricsBackfillHours }}"
         - name: MONGODB_USERNAME
           valueFrom:
             secretKeyRef:
