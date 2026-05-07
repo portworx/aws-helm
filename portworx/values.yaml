@@ -36,7 +36,7 @@ repo:
 
 versions:
   operator: "26.1.0"
-  enterprise: "3.6.0"
-  ociMon: "3.6.0"
-  autoPilot: "1.4.0"
+  enterprise: "3.6.0.1"
+  ociMon: "3.6.0.1"
+  autoPilot: "1.5.0"
   stork: "26.2.0"
