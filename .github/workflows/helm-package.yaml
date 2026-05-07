@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '**'
+    paths:
+      - 'px-central/**'
 
 jobs:
   helm-package:
