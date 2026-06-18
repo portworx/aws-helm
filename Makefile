@@ -19,6 +19,10 @@ operator_image := docker.io/portworx/px-operator:$(OPERATOR_VERSION)
 autopilot_image := docker.io/portworx/autopilot:$(AUTOPILOT_VERSION)
 stork_image := docker.io/openstorage/stork:$(STORK_VERSION)
 
+
+build_dir := .build
+package_dir := ../stable
+
 # Helper functions to get mapping values
 src_image = $(if $($(1)_image),$($(1)_image),$(error Image not defined for '$(1)'))
 dest_image = $(subst docker.io/portworx,$(1),$(subst docker.io/openstorage,$(1),$(call src_image,$(2))))
@@ -50,7 +54,12 @@ lint:
 
 package-helm: lint
 	@echo "Packaging helm chart for portworx enterprise"
-	cd stable && helm package ../portworx && helm repo index . --url https://raw.githubusercontent.com/portworx/aws-helm/$(GIT_BRANCH)/stable
+	mkdir $(build_dir)
+	cd $(build_dir) && helm package ../portworx && \
+		helm repo index . --url https://raw.githubusercontent.com/portworx/aws-helm/$(GIT_BRANCH)/stable --merge=$(package_dir)/index.yaml && \
+		cp *.yaml *.tgz $(package_dir)
+	rm -rf $(build_dir)
+
 
 list-%:
 	@echo "$(call dest_image,$(MARKETPLACE_PXE_REPO),$*)"
