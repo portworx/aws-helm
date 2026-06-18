@@ -3,10 +3,11 @@ MARKETPLACE_PXE_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx
 MARKETPLACE_PXE_DR_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr
 
 # Version configuration
-PXE_VERSION := 3.6.0.1
-OPERATOR_VERSION := 26.1.0
+PXE_VERSION := 3.6.1
+OPERATOR_VERSION := 26.2.0
 AUTOPILOT_VERSION := 1.5.0
-STORK_VERSION := 26.2.0
+STORK_VERSION := 26.3.0
+
 
 GIT_BRANCH ?= $(shell git branch --show-current)
 COMPONENTS := px-enterprise oci-monitor operator autopilot stork
@@ -17,6 +18,10 @@ oci-monitor_image := docker.io/portworx/oci-monitor:$(PXE_VERSION)
 operator_image := docker.io/portworx/px-operator:$(OPERATOR_VERSION)
 autopilot_image := docker.io/portworx/autopilot:$(AUTOPILOT_VERSION)
 stork_image := docker.io/openstorage/stork:$(STORK_VERSION)
+
+
+build_dir := .build
+package_dir := ../stable
 
 # Helper functions to get mapping values
 src_image = $(if $($(1)_image),$($(1)_image),$(error Image not defined for '$(1)'))
@@ -49,7 +54,12 @@ lint:
 
 package-helm: lint
 	@echo "Packaging helm chart for portworx enterprise"
-	cd stable && helm package ../portworx && helm repo index . --url https://raw.githubusercontent.com/portworx/aws-helm/$(GIT_BRANCH)/stable
+	mkdir $(build_dir)
+	cd $(build_dir) && helm package ../portworx && \
+		helm repo index . --url https://raw.githubusercontent.com/portworx/aws-helm/$(GIT_BRANCH)/stable --merge=$(package_dir)/index.yaml && \
+		cp *.yaml *.tgz $(package_dir)
+	rm -rf $(build_dir)
+
 
 list-%:
 	@echo "$(call dest_image,$(MARKETPLACE_PXE_REPO),$*)"
@@ -64,3 +74,4 @@ update-versions:
 	sed -Ei '/ociMon:\s*\"$(PXE_VERSION)\"/{n; s/^\s+autoPilot:\s+\S+(.*)$$/  autoPilot: "$(AUTOPILOT_VERSION)"\1/}' ./portworx/values.yaml
 	sed -Ei '/autoPilot:\s*\"$(AUTOPILOT_VERSION)\"/{n; s/^\s+stork:\s+\S+(.*)$$/  stork: "$(STORK_VERSION)"\1/}' ./portworx/values.yaml
 	sed -i 's/^appVersion:\s*.*$$/appVersion: "$(PXE_VERSION)"/' ./portworx/Chart.yaml
+

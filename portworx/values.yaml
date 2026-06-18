@@ -35,8 +35,8 @@ repo:
   dr: "709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr"
 
 versions:
-  operator: "26.1.0"
-  enterprise: "3.6.0.1"
-  ociMon: "3.6.0.1"
+  operator: "26.2.0"
+  enterprise: "3.6.1"
+  ociMon: "3.6.1"
   autoPilot: "1.5.0"
-  stork: "26.2.0"
+  stork: "26.3.0"
