@@ -21,6 +21,7 @@ persistentStorage:
   keycloakBackendVolumeSize: "10Gi"
   preUpgradeHookVolumeSize: "65Gi"
   preInstallHookVolumeSize: "2Gi"
+  telemetryVolumeSize: "10Gi"
 
 storkRequired: false
 nodeAffinityLabel: ""
@@ -126,6 +127,7 @@ pxbackup:
   nfs:
     enabled: true
   deployDedicatedMonitoringSystem: true
+  enableExternalMetricsScraping: false
   prometheusEndpoint: ""
   alertmanagerEndpoint: ""
   prometheusSecretName: ""
@@ -135,10 +137,13 @@ pxbackup:
   enableMonitorBLHealth: false
   backupDeleteWorker: 5
   volDeleteWorker: 5
-  version: 2.11.0
+  backupInfoMetricsBackfillHours: ""
+  dashboardMetricsBackfillDays: ""
+  version: 3.0.0
   skipValidations: true
   usePlatformRbac: false
   encryptMongoDB: false
+  federated: false
 
 pxlicenseserver:
   enabled: false
@@ -162,6 +167,19 @@ pxmonitor:
   cortex:
     alertmanager:
       advertiseAddress: ""
+
+# Telemetry configuration for PX-Backup
+telemetry:
+  enabled: false
+  environment: production # Environment: staging or production
+  metricsCollector:
+    enabled: false
+    scrapeInterval: 10  # seconds
+  logsCollector:
+    enabled: true
+    collectionInterval: 3600  # seconds (1 hour)
+    # Exclude pods matching these patterns (comma-separated)
+    excludePodPatterns: "alertmanager,prometheus,telemetry"
 
 service:
   pxCentralUIServiceType: "LoadBalancer"
@@ -225,49 +243,49 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-api
-    tag: 2.11.0
+    tag: 3.0.0
     module: pxCentral
   pxcentralFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-frontend
-    tag: 2.11.0
+    tag: 3.0.0
     module: pxCentral
   pxcentralBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-backend
-    tag: 2.11.0
+    tag: 3.0.0
     module: pxCentral
   pxcentralMiddlewareImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-ui-lhbackend
-    tag: 2.11.0
+    tag: 3.0.0
     module: pxCentral
   postInstallSetupImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-post-setup
-    tag: 2.11.0
+    tag: 3.0.0
     module: pxCentral
   keycloakBackendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
     imageName: postgresql
-    tag: "18"
+    tag: "18.4"
     module: pxCentral
   keycloakFrontendImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/jboss
     imageName: keycloak
-    tag: 26.4.7_v2
+    tag: 26.5.7_v2
     module: pxCentral
   keycloakLoginThemeImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: keycloak-login-theme
-    tag: 2.11.0
+    tag: 3.0.0
     module: pxCentral
   keycloakInitContainerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
@@ -279,13 +297,13 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/library
     imageName: mysql
-    tag: 8.0.44
+    tag: 8.4.9
     module: pxCentral
   preSetupHookImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: pxcentral-onprem-hook
-    tag: 2.11.0
+    tag: 3.0.0
     module: pxCentral
   mysqlInitImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
@@ -299,13 +317,45 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: px-backup
-    tag: 2.11.0
+    tag: 3.0.0
     module: pxBackup
   mongodbImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx/bitnami
     imageName: mongodb
-    tag: 8.0.17
+    tag: 8.0.20
+    module: pxBackup
+
+  ## Images required for PX-Backup Telemetry
+  telemetryEnvoyImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: telemetry-envoy
+    tag: 1.1.18
+    module: pxBackup
+  telemetryRegistrationImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: ccm-go
+    tag: 1.4.42
+    module: pxBackup
+  telemetryMetricsCollectorImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: realtime-metrics
+    tag: 1.0.36
+    module: pxBackup
+  telemetryDataCollectorImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: px-backup-telemetry-collector
+    tag: 3.0.0
+    module: pxBackup
+  telemetryLogUploadImage:
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
+    repo: portworx
+    imageName: log-upload
+    tag: px-1.1.148
     module: pxBackup
 
   
@@ -315,25 +365,25 @@ images:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: prometheus
-    tag: v3.8.1
+    tag: v3.11.3
     module: pxBackup
   pxBackupAlertmanagerImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: alertmanager
-    tag: v0.30.0
+    tag: v0.32.1
     module: pxBackup
   pxBackupPrometheusOperatorImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: prometheus-operator
-    tag: v0.87.1
+    tag: v0.91.0
     module: pxBackup
   pxBackupPrometheusConfigReloaderImage:
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     repo: portworx
     imageName: prometheus-config-reloader
-    tag: v0.87.1
+    tag: v0.91.0
     module: pxBackup
 
   ## Images required for intermediate Mongo upgrades
@@ -342,5 +392,5 @@ images:
       mongodb5: 5.0.24-debian-11-r20
       mongodb6: 6.0.13-debian-11-r21
       mongodb7: 7.0.15-debian-12-r2
-      mongodb8: 8.0.17
+      mongodb8: 8.0.20
     module: pxBackup
