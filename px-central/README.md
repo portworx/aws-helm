@@ -151,6 +151,7 @@ Parameter | Description | Default
 `images` | PX-Backup deployment images | `""`
 `pxbackup.enabled` | Enabled PX-Backup | `false`
 `pxbackup.orgName` | PX-Backup organization name | `default`
+`pxbackup.federated` | Enable federated mode for PX-Backup | `false`
 `pxbackup.nodeAffinityLabel` | Label for node affinity for px-central components| `""`
 `images.pxBackupImage.registry` | PX-Backup image registry | `docker.io`
 `images.pxBackupImage.repo` | PX-Backup image repo | `portworx`
