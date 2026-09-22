@@ -3,10 +3,10 @@ MARKETPLACE_PXE_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx
 MARKETPLACE_PXE_DR_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr
 
 # Version configuration
-PXE_VERSION := 3.6.2
-OPERATOR_VERSION := 26.3.0
+PXE_VERSION := 3.7.0
+OPERATOR_VERSION := 26.3.2
 AUTOPILOT_VERSION := 1.5.0
-STORK_VERSION := 26.4.0
+STORK_VERSION := 26.4.1
 
 
 GIT_BRANCH ?= $(shell git branch --show-current)
@@ -27,9 +27,7 @@ package_dir := ../stable
 src_image = $(if $($(1)_image),$($(1)_image),$(error Image not defined for '$(1)'))
 dest_image = $(subst docker.io/portworx,$(1),$(subst docker.io/openstorage,$(1),$(call src_image,$(2))))
 
-.PHONY: pull publish
-
-pull: $(addprefix pull-,$(COMPONENTS))
+.PHONY: publish
 
 publish: $(addprefix publish-,$(COMPONENTS))
 
@@ -37,17 +35,11 @@ list: $(addprefix list-,$(COMPONENTS))
 
 listdr: $(addprefix listdr-,$(COMPONENTS))
 
-pull-%:
-	@echo "Pulling image $*"
-	docker pull $(call src_image,$*)
-	docker tag $(call src_image,$*) $(call dest_image,$(MARKETPLACE_PXE_REPO),$*)
-	docker tag $(call src_image,$*) $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)
-
 publish-%:
-	@echo "Pushing image $(call dest_image,$(MARKETPLACE_PXE_REPO),$*)"
-	docker push $(call dest_image,$(MARKETPLACE_PXE_REPO),$*)
-	@echo "Pushing image $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)"
-	docker push $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)
+	@echo "Copying image $(call src_image,$*) -> $(call dest_image,$(MARKETPLACE_PXE_REPO),$*)"
+	crane copy $(call src_image,$*) $(call dest_image,$(MARKETPLACE_PXE_REPO),$*)
+	@echo "Copying image $(call src_image,$*) -> $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)"
+	crane copy $(call src_image,$*) $(call dest_image,$(MARKETPLACE_PXE_DR_REPO),$*)
 
 lint:
 	helm lint portworx
@@ -74,4 +66,5 @@ update-versions:
 	sed -Ei '/ociMon:\s*\"$(PXE_VERSION)\"/{n; s/^\s+autoPilot:\s+\S+(.*)$$/  autoPilot: "$(AUTOPILOT_VERSION)"\1/}' ./portworx/values.yaml
 	sed -Ei '/autoPilot:\s*\"$(AUTOPILOT_VERSION)\"/{n; s/^\s+stork:\s+\S+(.*)$$/  stork: "$(STORK_VERSION)"\1/}' ./portworx/values.yaml
 	sed -i 's/^appVersion:\s*.*$$/appVersion: "$(PXE_VERSION)"/' ./portworx/Chart.yaml
+
 
