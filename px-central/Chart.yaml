@@ -13,5 +13,5 @@ keywords:
 name: px-central
 sources:
 - https://github.com/portworx/aws-helm/tree/master/charts/px-central
-version: 3.1.0
-appVersion: 3.1.0
+version: 3.1.2
+appVersion: 3.1.2
