@@ -3,10 +3,10 @@ MARKETPLACE_PXE_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx
 MARKETPLACE_PXE_DR_REPO = 709825985650.dkr.ecr.us-east-1.amazonaws.com/portworx/dr
 
 # Version configuration
-PXE_VERSION := 3.7.1
-OPERATOR_VERSION := 26.4.0
-AUTOPILOT_VERSION := 1.5.1
-STORK_VERSION := 26.4.2
+PXE_VERSION := 3.7.2
+OPERATOR_VERSION := 26.5.0
+AUTOPILOT_VERSION := 1.6.0
+STORK_VERSION := 26.5.0
 
 
 GIT_BRANCH ?= $(shell git branch --show-current)
